@@ -1,82 +1,173 @@
-<p align="center">
-  <img src="docs/images/phenomenals_logo.png" alt="PhenoMeNals logo" width="200"/>
-</p>
+# The PhenoMeNals Framework for Grapevine Yield and Quality Prediction
 
-# PhenoMeNals - Phenology Memory sigNals for Grapevine Yield and Quality Prediction
-
-[![License: CC BY-NC 3.0](https://img.shields.io/badge/License-CC%20BY--NC%203.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/3.0/)
-[![Platform](https://img.shields.io/badge/platform-Windows--only-blue)](https://microsoft.com)  
-[![Language](https://img.shields.io/badge/language-R%20%7C%20C%23-purple)](https://cran.r-project.org/)  
-![Status](https://img.shields.io/badge/status-active-brightgreen)
+**Simone Bregaglio¹\*, Sofia Bajocco¹**  
+¹ CREA - Council for Agricultural Research and Economics, Research Centre for Agriculture and Environment, Italy  
+\* corresponding author: simoneugomaria.bregaglio@crea.gov.it  
 
 ---
 
-## 📖 Overview
+## 📖 Abstract
 
-**PhenoMeNals** is an open-source framework for **predicting grapevine yield and quality traits**.  
-It integrates **two-season phenology modeling**, **ecophysiological functions**, and **statistical methods** to generate cumulative environmental memory signals (PhenoMeNals) driving reproductive processes.
+Timely prediction of grapevine yield and quality is a major scientific challenge with direct implications for vineyard management, enological planning, and winery logistics. Despite numerous advances, most existing approaches remain constrained to specific sites or varieties and do not explicitly account for the two-year grapevine cycle, thereby overlooking the temporal dynamics underlying reproductive physiology.
 
----
+We introduce **PhenoMeNals**, an open-source framework integrating **phenology simulation**, **ecophysiological functions**, and **statistical modeling** to capture environmental carry-over effects. The coupled dormancy-forcing model, calibrated with BBCH observations (RMSE 6-9 days), provides the temporal structure spanning the two-season cycle. Weather cues are sigmoidal-normalized, weighted by correlation strength with traits, and cumulatively summed along the phenological timeline to derive memory signals (*PhenoMeNals*). 
 
-## Table of Contents
+Multicollinearity is addressed through pairwise filtering and stepwise feature selection, and model robustness is evaluated using **leave-one-out cross-validation**. The framework was validated on multi-site, multi-variety datasets for yield and quality traits, achieving R² consistently above 0.8. 
 
-- [Highlights](#highlights)
-- [Description](#description)
-- [Installation](#installation)
-- [Getting Started](#getting-started)
-- [Equations](#equations)
-- [Support](#support)
-- [License](#license)
-- [How It Works](#how-it-works)
+**Keywords**: grapevine phenology, memory signals, yield prediction, ecophysiological functions, BBCH, LOOCV, open-source R package.
 
 ---
 
-## Highlights
+## 🌱 Overview
 
-- 🌱 **Two-season chill-forcing phenology model** (dormancy → harvest)  
-- 🧠 **8 environmental signals**:  
-  `TempF`, `ColdF`, `HeatF`, `LightF`, `WindF`, `DiseaseF`, `VPDefF`, `DroughtF`  
-- ⚙️ Signals are **sigmoid-normalized**, **weighted by correlation** with target traits, and **aggregated into memory signals**  
-- 🔬 Handles multicollinearity (VIF) and performs **automatic feature selection (AIC)**  
-- 🪟 **Windows-only** (C# core) – cross-platform support in development
+**PhenoMeNals** integrates:
 
----
+1. **Phenology simulation** (two-season dormancy-forcing model)
+2. **Eco-physiological functions** aligned with phenology:
+   - Temperature suitability (TempF)
+   - Cold and heat stress (ColdF, HeatF)
+   - Light and vapor pressure deficit limitations (LightF, VPDefF)
+   - Drought index (DroughtF)
+   - Wind and disease stress (WindF, DiseaseF)
+3. **Statistical methods** to construct memory signals and perform robust predictions.
 
-## Description
-
-**PhenoMeNals** addresses the challenge of integrating weather effects across grapevine's **two-year reproductive cycle**, where yield components are determined across multiple phenophases.
-
-### Workflow
-
-1. **Calibrate phenology:** BBCH observations calibrate a chill-forcing model providing a standardized phenological timeline (0–400 units across two seasons).
-2. **Compute environmental functions:**  
-   Each environmental driver is expressed as a daily function (e.g., temperature forcing, vapor pressure deficit stress, etc.).
-3. **Normalize and weight:**  
-   Signals are normalized using long-term percentile distributions and weighted by correlation strength with the target trait.
-4. **Aggregate into memory signals:**  
-   Weighted daily values are cumulatively summed along the phenological timeline to form the **PhenoMeNals**, which are then used as predictors.
-
-<figure>
-  <p align="center">
-    <img src="docs/images/phenomenals_schema.png" width="600">
-  </p>
-  <figcaption align="center"><em>PhenoMeNals workflow: from phenology to cumulative memory signals</em></figcaption>
-</figure>
+The framework is implemented as an **R package** with C# backend for Windows.
 
 ---
 
-## Installation
+## 🔢 Core Equations
 
-> ⚠️ **Platform notice:**  
-> PhenoMeNals currently runs **only on Windows** due to its compiled C# backend.  
-> macOS/Linux support is under development.
+### 1. Temperature suitability (TempF)
 
-### 1. Install R
+\[
+TempF = 
+\begin{cases}
+0 & T < T_{min} \, \text{or} \, T > T_{max} \\
+\frac{(T_{max} - T)}{(T_{max} - T_{opt})}
+\left( \frac{T - T_{min}}{T_{opt} - T_{min}} \right)^{\frac{T_{opt} - T_{min}}{T_{max} - T_{opt}}}
+& T_{min} \leq T \leq T_{max}
+\end{cases}
+\]
 
-Make sure you have **R (≥ 4.0)** installed:  
-🔗 [https://cran.r-project.org/](https://cran.r-project.org/)
+### 2. Cold and Heat stress (ColdF, HeatF)
 
-### 2. Install Required R Packages
+\[
+ColdF = \frac{1}{1 + e^{-k_{cold}(T - T_{50})}}
+\quad
+HeatF = \frac{1}{1 + e^{k_{heat}(T - T_{50})}}
+\]
 
-```r
-install.packages(c("devtools", "caret", "MASS", "data.table"))
+### 3. Light and VPD functions
+
+\[
+LightF = 1 - e^{-k_{light} \cdot PAR / L_{max}}
+\quad
+VPDeF = \frac{1}{1 + e^{k_{vpd}(VPD - VPD_{50})}}
+\]
+
+### 4. Memory signals
+
+Each normalized function is weighted by correlation (r) and significance (p):
+
+\[
+weighted_i = scaled_i \cdot r \cdot (1 - p)
+\]
+
+Final **PhenoMeNal** for year *i* and function *j*:
+
+\[
+PhenoMeNal_{i,j} = \sum_{bin=1}^{400} weighted_{i,j}(bin)
+\]
+
+---
+
+## 📦 Installation
+
+> ⚠️ **Windows only (for now)**. macOS/Linux support is under development.
+
+### 1. Install R (≥ 4.0)
+
+https://cran.r-project.org/
+
+### 2. Install required R packages
+
+    install.packages(c("devtools", "caret", "MASS", "data.table"))
+
+### 3. Install PhenoMeNals from GitHub
+
+    devtools::install_github("YourOrg/PhenoMeNals")
+
+---
+
+## 🚀 Getting Started
+
+### 1. Calibrate phenology model
+
+    calib <- phenologyCalibration(
+      weather_data = weather_df,
+      referenceBBCH = bbch_df,
+      sites = "COL",
+      varieties = "Carmenere",
+      iterations = 200
+    )
+
+### 2. Run full workflow
+
+    results <- runPhenomenals(
+      weather_data = weather_df,
+      target_data = yield_df,
+      start_year = 2006,
+      end_year = 2021,
+      rolling_window = 3,
+      bin_size = 1,
+      multicollinearity_threshold = 0.8,
+      max_phenomenals = 4
+    )
+
+**Outputs include**:
+- Selected PhenoMeNals (weighted environmental memory signals)
+- Predictions for yield, quality traits
+- Cross-validation metrics: R², RMSE, MAE
+- Variable importance and diagnostic plots
+
+---
+
+## 📊 Validation
+
+- Multi-site, multi-variety datasets (Europe, Australia, USA)
+- Phenology RMSE: **6–9 days**
+- Yield and quality R²: **>0.8** in LOOCV  
+- Predictive accuracy improves as the season advances
+
+---
+
+## 📜 References
+
+The full methodological details, validation datasets and equations are published in:
+
+**Bregaglio & Bajocco (2025).**  
+*The PhenoMeNals framework for grapevine yield and quality prediction.*  
+[Preprint / Journal link]
+
+---
+
+## 📂 License & Data
+
+- Code released under **CC BY-NC 3.0**
+- Validation dataset included (BBCH, weather, yield, quality traits)
+
+---
+
+## 🤝 Acknowledgments
+
+This work was supported by:
+- **AGRARSENSE** project (EU & Italian Ministry of Enterprises and Made in Italy)
+- **MISFITS** project (Italian Ministry of Agriculture, Food Sovereignty and Forestry)
+
+---
+
+## ✉️ Contact
+
+Open issues at: [GitHub Issues](https://github.com/YourOrg/PhenoMeNals/issues)  
+Or email **simoneugomaria.bregaglio@crea.gov.it**
+
