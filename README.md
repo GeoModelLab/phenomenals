@@ -165,9 +165,11 @@ result <- phenologyCalibration(
 )
 ```
 
-# Outputs:
-# result$parameters → Calibrated parameter table (per site × variety)
-# result$phenology  → Simulated BBCH time series
+##### Outputs:
+```r
+result$parameters → Calibrated parameter table (per site × variety)
+result$phenology  → Simulated BBCH time series
+```
 
 #### Input parameters
 ##### 1. weather_data
@@ -189,6 +191,77 @@ The function supports flexible column names (aliases are automatically detected)
 | `WindSpeed`           | wind, ws                                   | m/s                            | hourly/daily | Optional   |
 | `Radiation`           | rad, solar, solarrad                       | MJ/m² (daily) or W/m² (hourly) | hourly/daily | Optional   |
 | `Latitude`            | latitude, lat                              | decimal deg                    | hourly/daily | **Yes**   |
+
+Notes:
+
+    For daily data, only Tmax, Tmin, and Precipitation are strictly required.
+    For hourly data, only Temperature, Precipitation, Hour, and DateTime are required.
+    If RelativeHumidity or Radiation are missing, they are automatically estimated using Tmax, Tmin, precipitation, and latitude.
+
+Example (daily):
+Site,Date,Tmax,Tmin,Precipitation,WindSpeed,RelativeHumidityMax,RelativeHumidityMin,Radiation,Latitude
+ColliOrientali,2007-04-02,21.2,8.5,0,1.5,85,42,17.2,44.0
+Example (hourly):
+Site,DateTime,Hour,Temperature,Precipitation,RelativeHumidity,WindSpeed,Radiation,Latitude
+ColliOrientali,2007-04-02,7,12.1,0,82,1.4,120,44.0
+
+##### 2. referenceBBCH
+A data frame containing BBCH phenological observations.
+This dataset must include at least the following columns:
+| Column      | Description                                      | Example        | Mandatory? |
+| ----------- | ------------------------------------------------ | -------------- | ---------- |
+| `Variety`   | Variety name                                     | CabernetS      | **Yes**    |
+| `Site`      | Site name (must match sites in `weather_data`)   | ColliOrientali | **Yes**    |
+| `Latitude`  | Latitude of the site (decimal degrees)           | 44.0           | **Yes**    |
+| `Longitude` | Longitude of the site (decimal degrees)          | 11.0           | **Yes**    |
+| `Date`      | Date of observation (format: `yyyy-mm-dd`)       | 2007-04-02     | **Yes**    |
+| `BBCH`      | BBCH growth stage (numeric code, see BBCH scale) | 8, 65          | **Yes**    |
+
+Example:
+Variety,Site,Latitude,Longitude,Date,BBCH
+CabernetS,ColliOrientali,44,11,2007-04-02,8
+CabernetS,ColliOrientali,44,11,2007-05-16,65
+
+##### 3. phenomenalsParameters
+A nested list of model parameters. This list is typically loaded from
+phenomenals::phenomenalsParameters and can be customized.
+
+Structure:
+```r
+list[
+  species][[class]][[parameter]] = list(
+    min = <minimum calibration value>,
+    max = <maximum calibration value>,
+    value = <default value>,
+    calibration = <TRUE/FALSE>
+  )
+```
+
+Example:
+
+```r
+phenomenalsParameters$grapevine$leaf$thermalTime <- list(
+  min = 100,
+  max = 250,
+  value = 150,
+  calibration = TRUE
+)
+```
+Notes:
+
+    Parameters marked with calibration = TRUE are optimized during calibration.
+    The list is automatically exported to the correct CSV format for the C# engine; you do not need to handle file conversions.
+
+##### 4. Other Arguments
+| Argument     | Description                                                                                             | Default   |
+| ------------ | ------------------------------------------------------------------------------------------------------- | --------- |
+| `start_year` | First year of the calibration period                                                                    | `2000`    |
+| `end_year`   | Last year of the calibration period                                                                     | `2025`    |
+| `sites`      | Site names (must match `Site` in `weather_data` and `referenceBBCH`). Use `"all"` to include all sites. | `"all"`   |
+| `varieties`  | Varieties to include (must match `Variety` in `referenceBBCH`). Use `"all"` to include all varieties.   | `"all"`   |
+| `iterations` | Number of iterations for the simplex algorithm                                                          | `100`     |
+| `timestep`   | Time step of `weather_data` (**"daily"** or **"hourly"**)                                               | `"daily"` |
+
 
 
 
