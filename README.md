@@ -136,41 +136,43 @@ The C# source code for the phenology calibration engine is included in the repos
 
 ## Getting Started
 
-The **PhenoMeNals** framework consists of two main processes: **phenology model calibration** and **trait prediction**.  
-For each process, functions are available in the R package to run analyses on a single site/variety or perform batch executions for larger datasets.
+The **PhenoMeNals** framework is built around two functions:  
+1️⃣ **`phenologyCalibration()`** – calibrates the underlying phenology model using BBCH field observations and weather data.  
+2️⃣ **`runPhenomenals()`** – computes eco-physiological memory signals and predicts traits.
 
 ---
 
 ### 1. `phenologyCalibration()`
 
-Performs **calibration** of the phenology model using BBCH phenological observations and weather data via a **multi-start simplex algorithm**.  
-Returns all outputs in R as structured data frames.
+This function runs the **PhenoMeNals** phenology model by passing weather data and phenological observations (BBCH) directly from R to the underlying C# executable.  
+Users do not need to manage configuration files or binaries manually — all paths and execution logic are handled internally.
 
-**Usage:**
-```r
-result <- phenologyCalibration(
-  weather_data = your_weather_df,
-  referenceBBCH = your_bbch_df,
-  varieties = "Cabernet",
-  sites = "Colli_Orientali",
-  start_year = 2006,
-  end_year = 2024,
-  iterations = 100
-)
-
-# Output structure:
-# result$calibration_results     → Simulated phenological stages (BBCH)
-# result$parameters_site_variety → Calibrated parameters per site × variety
-```
 ---
 
-## Support
+#### **Required Inputs**
 
-Need help?
+- **`weather_data`**: A data frame containing **hourly or daily weather data**.  
+  Must include at least the following columns (aliases are supported):  
 
-- Open an issue: https://github.com/GeoModelLab/SWELL/issues
-- Contact the maintainer via email (see DESCRIPTION file)
+  | Column              | Aliases (recognized)                                        | Units       |
+  |---------------------|-------------------------------------------------------------|-------------|
+  | `Site`              | site, station, location                                     | –           |
+  | `DateTime` / `Date` | date, datetime, timestamp                                   | Date (POSIXct or `yyyy-mm-dd`) |
+  | `Hour` (if hourly)  | hour, hr                                                    | 0–23        |
+  | `Temperature`       | temp, temperature, t2m                                     | °C          |
+  | `Tmax` (if daily)   | tmax, maxtemp, t2mmax                                       | °C          |
+  | `Tmin` (if daily)   | tmin, mintemp, t2mmin                                       | °C          |
+  | `Precipitation`     | prec, rainfall, rain, prectotcorr                           | mm          |
+  | `RelativeHumidity`  | rh, humidity, relhumidity                                   | %           |
+  | `WindSpeed`         | wind, ws                                                    | m/s         |
+  | `Radiation`         | rad, solar, solarrad                                        | MJ/m² (daily) or W/m² (hourly) |
+  | `Latitude`          | latitude, lat                                               | decimal deg |
 
+  **Example (daily):**
+
+  ```text
+  Site,Date,Tmax,Tmin,Precipitation,WindSpeed,RelativeHumidityMax,RelativeHumidityMin,Radiation,Latitude
+  ColliOrientali,2007-04-02,21.2,8.5,0,1.5,85,42,17.2,44.0
 ---
 ## License
 This project is licensed under the **Creative Commons Attribution-NonCommercial 3.0 Unported (CC BY-NC 3.0)** license.
