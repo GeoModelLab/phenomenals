@@ -169,30 +169,32 @@ n_values <- stats %>%
 # Plot
 ggplot() +
   geom_line(data = gray_curves, aes(x = x, y = y, group = id),
-            color = "#b2dfb2", size = 0.1, alpha = 0.3) +  # very light green-gray
+            color = "#b2dfb2", size = 0.1, alpha = 0.3) +
   geom_line(data = curve_mean, aes(x = x, y = y),
-            color = "#2ca02c", size = 1.2) +  # consistent strong green for mean
-  # Parameter labels with pedici (subscripts)
-  annotate("text", x = 3, y = 1,
-           label = bquote(T[min]~"(" * degree * C * ") = " *
-                            .(round(Tmin_mu, 1)) %+-% .(round(Tmin_sd, 1))),
-           hjust = 0, size = 5) +
-  annotate("text", x = 3, y = 0.9,
-           label = bquote(T[opt]~"(" * degree * C * ") = " *
-                            .(round(Topt_mu, 1)) %+-% .(round(Topt_sd, 1))),
-           hjust = 0, size = 5) +
-  annotate("text", x = 3, y = 0.8,
-           label = bquote(T[max]~"(" * degree * C * ") = " *
-                            .(round(Tmax_mu, 1)) %+-% .(round(Tmax_sd, 1))),
-           hjust = 0, size = 5) +
+            color = "#2ca02c", size = 1.2) +
+
+  # Add points at Tmin, Topt, Tmax
+  geom_point(aes(x = Tmin_mu, y = 0), color = "darkgreen", size = 3) +
+  geom_point(aes(x = Topt_mu, y = 1), color = "darkgreen", size = 3) +
+  geom_point(aes(x = Tmax_mu, y = 0), color = "darkgreen", size = 3) +
+
+  # Annotated labels placed near points, slightly offset to avoid overlap
+  annotate("text", x = Tmin_mu, y = 0.05, label = expression(T[min]),
+           hjust = 0.5, vjust = 0, size = 7) +
+  annotate("text", x = Topt_mu, y = 0.9, label = expression(T[opt]),
+           hjust = 0.5, vjust = -1, size = 7) +
+  annotate("text", x = Tmax_mu+2, y = 0.05, label = expression(T[max]),
+           hjust = 0.5, vjust = 0, size = 7) +
 
   labs(
     title = "TempF",
     x = "Temperature (°C)",
     y = "Response"
   ) +
-  coord_cartesian(ylim = c(0, 1)) +
-  theme_classic(base_size = 16)
+  coord_cartesian(ylim = c(0, 1.1)) +
+  scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, by = 0.2))+
+  theme_classic(base_size = 19)
+
 
 ggsave('TempF.png', width=6,height=4)
 
@@ -253,27 +255,32 @@ subtitle_text <- sprintf(
   Tmin_mu, Tmin_sd, Tcrit_mu, Tcrit_sd
 )
 
-# Plot
 ggplot() +
   geom_line(data = gray_curves, aes(x = x, y = y, group = id),
-            color = "#c6dbef", size = 0.1, alpha = 0.2) +  # Light blue
+            color = "#c6dbef", size = 0.1, alpha = 0.2) +
   geom_line(data = curve_mean, aes(x = x, y = y),
-            color = "#1f78b4", size = 1.2) +  # Deep blue
+            color = "#1f78b4", size = 1.2) +
 
-  # Parameter labels inside plot at top-left
-  annotate("text", x = -5, y = 1.00,
-           label = bquote(T[min]~"(°C) = "~.(round(Tmin_mu, 1)) %+-% .(round(Tmin_sd, 1))),
-           hjust = 0, size = 5) +
-  annotate("text", x = -5, y = 0.90,
-           label = bquote(T[cold]~"(°C) = "~.(round(Tcrit_mu, 1)) %+-% .(round(Tcrit_sd, 1))),
-           hjust = 0, size = 5) +
+  # Points at Tmin and Tcold
+  geom_point(aes(x = Tmin_mu, y = 1), color = "#1f78b4", size = 3) +
+  geom_point(aes(x = Tcrit_mu, y = 0), color = "#1f78b4", size = 3) +
+
+  # Parameter labels near points
+  annotate("text", x = Tmin_mu, y = 1, label = expression(T[min]),
+           hjust = 0.5, vjust = -0.4, size = 7) +
+  annotate("text", x = Tcrit_mu, y = 0.05, label = expression(T[cold]),
+           hjust = 0.5, vjust = 0, size = 7) +
+
+  # Axes and formatting
   labs(
     title = "ColdF",
     x = "Temperature (°C)",
     y = "Response"
   ) +
-  coord_cartesian(ylim = c(0, 1)) +
-  theme_classic(base_size = 16)
+  coord_cartesian(ylim = c(0, 1.1)) +
+  scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, by = 0.2)) +
+  theme_classic(base_size = 19)
+
 
 # Save the plot
 ggsave("ColdF.png", width = 6, height = 4)
@@ -338,24 +345,30 @@ subtitle_text <- sprintf(
 # Plot
 ggplot() +
   geom_line(data = gray_curves, aes(x = x, y = y, group = id),
-            color = "#fde0c5", size = 0.1, alpha = 0.45) +  # light orange
+            color = "#fde0c5", size = 0.1, alpha = 0.45) +
   geom_line(data = curve_mean, aes(x = x, y = y),
-            color = "#e6550d", size = 1.2) +  # deep orange
-  # Parameter labels inside the plot
-  annotate("text", x = 37, y = 1.00,
-           label = bquote(T[max]~"(°C) ="~.(round(Tmax_mu, 1)) %+-% .(round(Tmax_sd, 1))),
-           hjust = 0, size = 5) +
-  annotate("text", x = 37, y = 0.90,
-           label = bquote(T[heat]~"(°C) ="~.(round(Tcrit_mu, 1)) %+-% .(round(Tcrit_sd, 1))),
-           hjust = 0, size = 5) +
+            color = "#e6550d", size = 1.2) +
+
+  # Points at Tmax and Theat
+  geom_point(aes(x = Tmax_mu, y = 1), color = "#e6550d", size = 3) +
+  geom_point(aes(x = Tcrit_mu, y = 0), color = "#e6550d", size = 3) +
+
+  # Parameter labels
+  annotate("text", x = Tmax_mu, y = 1, label = expression(T[max]),
+           hjust = 0.5, vjust = -0.4, size = 7) +
+  annotate("text", x = Tcrit_mu + 1, y = 0.05, label = expression(T[heat]),
+           hjust = 0.5, vjust = 0, size = 7) +
+
+  # Axes and labels
   labs(
     title = "HeatF",
     x = "Temperature (°C)",
     y = "Response"
   ) +
-  scale_x_continuous(breaks=c(30,33,36,39,42,45))+
-  coord_cartesian(ylim = c(0, 1)) +
-  theme_classic(base_size = 16)
+  scale_x_continuous(breaks = c(30, 33, 36, 39, 42, 45)) +
+  coord_cartesian(ylim = c(0, 1.1)) +
+  scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, by = 0.2)) +
+  theme_classic(base_size = 19)
 
 # Save the figure
 ggsave("HeatF.png", width = 6, height = 4)
@@ -420,27 +433,31 @@ subtitle_text <- sprintf(
   VPDmin_mu, VPDmin_sd, VPDmax_mu, VPDmax_sd, VPD50_mu
 )
 
-# Plot
 ggplot() +
   geom_line(data = gray_curves, aes(x = x, y = y, group = id),
-            color = "orange", size = 0.1, alpha = 0.1) +  # light red transparent
+            color = "orange", size = 0.1, alpha = 0.1) +
   geom_line(data = curve_mean, aes(x = x, y = y),
-            color = "#cb181d", size = 1.2) +  # intense red
+            color = "#cb181d", size = 1.2) +
 
-  # Parameter labels inside the plot
-  annotate("text", x = 2.4, y = 1.00,
-           label = bquote("VPD"["min"]~"(kPa) = "~.(round(VPDmin_mu, 2)) %+-% .(round(VPDmin_sd, 2))),
-           hjust = 0, size = 5) +
-  annotate("text", x = 2.4, y = 0.90,
-           label = bquote("VPD"["max"]~"(kPa) = "~.(round(VPDmax_mu, 2)) %+-% .(round(VPDmax_sd, 2))),
-           hjust = 0, size = 5) +
+  # Points at VPDmin and VPDmax
+  geom_point(aes(x = VPDmin_mu, y = 1), color = "#cb181d", size = 3) +
+  geom_point(aes(x = VPDmax_mu, y = 0), color = "#cb181d", size = 3) +
+
+  # Parameter labels near the points
+  annotate("text", x = VPDmin_mu, y = 1, label = expression(VPD[min]),
+           hjust = 0.5, vjust = -0.4, size = 7) +
+  annotate("text", x = VPDmax_mu + 0.1, y = 0.05, label = expression(VPD[max]),
+           hjust = 0.5, vjust = 0, size = 7) +
+
+  # Axes and labels
   labs(
     title = "VPDeF",
-    x = "VPD (kPa)",
+    x = "Vapor Pressure Deficit (kPa)",
     y = "Response"
   ) +
-  coord_cartesian(ylim = c(0, 1)) +
-  theme_classic(base_size = 16)
+  coord_cartesian(ylim = c(0, 1.1)) +
+  scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, by = 0.2)) +
+  theme_classic(base_size = 19)
 
 # Save the plot
 ggsave("VPDeF.png", width = 6, height = 4)
@@ -492,23 +509,28 @@ subtitle_text <- bquote(LightMax == .(round(LightMax_mu, 2)) %+-% .(round(LightM
 
 ggplot() +
   geom_line(data = gray_curves, aes(x = x, y = y, group = id),
-            color = "#ffd700", size = 0.1, alpha = 0.05) +  # light gray simulation lines
+            color = "#ffd700", size = 0.1, alpha = 0.05) +
   geom_line(data = curve_mean, aes(x = x, y = y),
-            color = "gold2", size = 1.2) +  # golden mean curve
-  # Parameter label in plot
-  annotate("text", x = 0.35, y = 0.85,
-           label = bquote("Light"["max"]~"(" * MJ~m^{-2}~h^{-1} * ") = " *
-                            .(round(LightMax_mu, 2)) %+-% .(round(LightMax_sd, 2))),
-           hjust = 0, size = 5) +
-  # Vertical reference line
+            color = "gold2", size = 1.2) +
+
+  # Point at LightMax
+  geom_point(aes(x = LightMax_mu, y = 1), color = "gold2", size = 3) +
+
+  # Parameter label
+  annotate("text", x = LightMax_mu, y = 1, label = expression(L[max]),
+           hjust = 0.5, vjust = -0.32, size = 7) +
+
+  # Axes and labels
   labs(
     title = "LightF",
-    x = expression(PAR~"("~MJ~m^{-2}~h^{-1}*")"),
+    x = expression(Photosynthetically~Active~Radiation~"("~MJ~m^{-2}~h^{-1}*")"),
     y = "Response"
   ) +
-  coord_cartesian(ylim = c(0, 1)) +
+  coord_cartesian(ylim = c(0, 1.1)) +
+  scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, by = 0.2)) +
   xlim(0, 1) +
-  theme_classic(base_size = 16)
+  theme_classic(base_size = 19) +
+  theme(axis.title.x = element_text(size = 17.3))  # smaller x-axis title
 
 # Save plot
 ggsave("LightF.png", width = 6, height = 4)
@@ -561,22 +583,27 @@ subtitle_text <- bquote(WindMin == .(round(WindMin_mu, 2)) %+-% .(round(WindMin_
 
 ggplot() +
   geom_line(data = gray_curves, aes(x = x, y = y, group = id),
-            color = "#deebf7", size = 0.1, alpha = 0.14) +  # light blue
+            color = "#deebf7", size = 0.1, alpha = 0.14) +
   geom_line(data = curve_mean, aes(x = x, y = y),
-            color = "#00BFFF", size = 1.2) +  # deep blue
-  # Annotated label with unit and stats
-  annotate("text", x = 5.4, y = 0.85,
-           label = bquote(Wind[min]~"(" * m~s^{-1} * ") = " *
-                            .(round(WindMin_mu, 2)) %+-% .(round(WindMin_sd, 2))),
-           hjust = 0, size = 5) +
+            color = "#00BFFF", size = 1.2) +
+
+  # Point at WindMin
+  geom_point(aes(x = WindMin_mu, y = 1), color = "#00BFFF", size = 3) +
+
+  # Parameter label
+  annotate("text", x = WindMin_mu, y = 1, label = expression(W[min]),
+           hjust = 0.5, vjust = -0.4, size = 7) +
+
+  # Axes and labels
   labs(
     title = "WindF",
     x = expression(Wind~Speed~"("~m~s^{-1}*")"),
     y = "Response"
   ) +
-  scale_x_continuous(breaks=c(0,3,6,9,12,15))+
-  coord_cartesian(ylim = c(0, 1)) +
-  theme_classic(base_size = 16)
+  scale_x_continuous(breaks = c(0, 3, 6, 9, 12, 15)) +
+  coord_cartesian(ylim = c(0, 1.1)) +
+  scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, by = 0.2)) +
+  theme_classic(base_size = 19)
 
 # Save the figure
 ggsave("WindF.png", width = 6, height = 4)
@@ -641,26 +668,31 @@ ggplot() +
   # Gray curves from sampled parameters
   geom_line(data = gray_curves, aes(x = x, y = y, group = id),
             color = "mistyrose", size = 0.1, alpha = 0.25) +
+
   # Mean curve
   geom_line(data = curve_mean, aes(x = x, y = y),
             color = "pink3", size = 1.2) +
-  # Parameter labels inside the plot
-  annotate("text", x = 45, y = 0.60,
-           label = bquote(Kc[ini]~"(-)" == .(round(Kcini_mu, 2)) %+-% .(round(Kcini_sd, 2))),
-           hjust = 0, size = 5) +
-  annotate("text", x = 45, y = 0.50,
-           label = bquote(Kc[full]~"(-)" == .(round(Kcmax_mu, 2)) %+-% .(round(Kcmax_sd, 2))),
-           hjust = 0, size = 5)+
-  # Axis and theme
+
+  # Points at Kcini and Kcmax reference positions
+  geom_point(aes(x = 0, y = Kcini_mu), color = "pink3", size = 3) +
+  geom_point(aes(x = 65, y = Kcmax_mu), color = "pink3", size = 3) +
+
+  # Parameter labels near the points
+  annotate("text", x = 10, y = Kcini_mu, label = expression(Kc[ini]),
+           hjust = 0.5, vjust = 0, size = 7) +
+  annotate("text", x = 65, y = Kcmax_mu + 0.1, label = expression(Kc[full]),
+           hjust = 0.5, vjust = 0, size = 7) +
+
+  # Axes and theme
   labs(
     title = "DroughtF",
     x = "BBCH phase",
     y = "Crop Coefficient (Kc)"
   ) +
   xlim(0, 89) +
-  coord_cartesian(ylim = c(0, 1)) +
-  theme_classic(base_size = 16)
-
+  coord_cartesian(ylim = c(0, 1.1)) +
+  scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, by = 0.2)) +
+  theme_classic(base_size = 19)
 # Save
 ggsave("DroughtF.png", width = 6, height = 4)
 
@@ -772,6 +804,7 @@ ggplot() +
   # Temperature gray curves
   geom_line(data = gray_curves_temp, aes(x = x, y = y, group = id),
             color = "gray80", size = 0.1, alpha = 0.15) +
+
   # Temperature mean curve (black)
   geom_line(data = curve_temp, aes(x = x, y = y1),
             color = "black", size = 1.2) +
@@ -780,39 +813,42 @@ ggplot() +
   geom_line(data = curve_wet, aes(x = x, y = y2 / WDopt_mu),
             color = "#b8860b", size = 1.2) +
 
-  # Internal parameter annotations
-  annotate("text", x = -1, y = 1.1,
-           label = bquote(T[min]~"(°C)" == .(round(Tmin_mu, 1)) %+-% .(round(Tmin_sd, 1))),
-           hjust = 0, size = 3.8) +
+  # Points for temperature parameters
+  geom_point(aes(x = Tmin_mu, y = 0.05), color = "black", size = 3) +
+  geom_point(aes(x = Topt_mu, y = 1), color = "black", size = 3) +
+  geom_point(aes(x = Tmax_mu, y = 0.05), color = "black", size = 3) +
 
-  annotate("text", x = 12.7, y = 1.1,
-           label = bquote(T[opt]~"(°C)" == .(round(Topt_mu, 1)) %+-% .(round(Topt_sd, 1))),
-           hjust = 0, size = 3.8) +
+  # Points for wetness requirement parameters (scaled)
+  geom_point(aes(x = Tmin_mu, y = .95), color = "#b8860b", size = 3) +
+  geom_point(aes(x = Tmax_mu, y = .95), color = "#b8860b", size = 3) +
 
-  annotate("text", x = 27, y = 1.1,
-           label = bquote(T[max]~"(°C)" == .(round(Tmax_mu, 1)) %+-% .(round(Tmax_sd, 1))),
-           hjust = 0, size = 3.8) +
+  # Labels for temperature parameters (with double subscripts)
+  annotate("text", x = Tmin_mu - 3, y = 0.05, label = expression(T[min*','*D]),
+           hjust = 0.5, vjust = 0, size = 7) +
+  annotate("text", x = Topt_mu, y = 1.05, label = expression(T[opt*','*D]),
+           hjust = 0.5, vjust = 0, size = 7) +
+  annotate("text", x = Tmax_mu + 2.2, y = 0.05, label = expression(T[max*','*D]),
+           hjust = 0.5, vjust = 0, size = 7) +
 
-  annotate("text", x = -1, y = 1.2,
-           label = bquote(WD[min]~"(h)" == .(round(WDmin_mu, 1)) %+-% .(round(WDmin_sd, 1))),
-           hjust = 0, size = 4) +
+  # Labels for wetness requirement (scaled on secondary axis)
+  annotate("text", x = Tmin_mu, y = 1, label = expression(WD[min]),
+           hjust = 0.5, vjust = 0, size = 7, color = "#b8860b") +
+  annotate("text", x = Tmax_mu, y = 1, label = expression(WD[opt]),
+           hjust = 0.5, vjust = 0, size = 7, color = "#b8860b") +
 
-  annotate("text", x = 15, y = 1.2,
-           label = bquote(WD[opt]~"(h)" == .(round(WDopt_mu, 1)) %+-% .(round(WDopt_sd, 1))),
-           hjust = 0, size = 4)+
   # Axis settings
   scale_y_continuous(
     name = "Temperature Response",
-    limits = c(0, 1.2),
-    breaks = c(seq(0,1,.25)),
+    limits = c(0, 1.1),
+    breaks = seq(0, 1, 0.2),
     sec.axis = sec_axis(~ . * WDopt_mu, name = "Wetness Requirement (h)")
   ) +
   labs(
     title = "DiseaseF",
     x = "Temperature (°C)"
   ) +
-  coord_cartesian(xlim = c(0, 40)) +
-  theme_classic(base_size = 16) +
+  coord_cartesian(xlim = c(5, 35), ylim = c(0, 1.2)) +
+  theme_classic(base_size = 19) +
   theme(
     axis.title.y.left = element_text(color = "black"),
     axis.title.y.right = element_text(color = "#b8860b"),
