@@ -61,7 +61,7 @@ Validated across **multi-site, multi-variety datasets**, PhenoMeNals consistentl
 
 <figure>
   <p align="center">
-    <img src="./docs/images/phenomenals_schema.png" width="700">
+    <img src="./docs/images/phenomenals_schema.png" width="550">
   </p>
   <figcaption align="center">
     <em>Figure 1. Overview of the PhenoMeNals workflow. The pipeline integrates BBCH observations and weather data to calibrate a phenological model reproducing the grapevine cycle across two seasons (Year -1 and Year 0). Eco-physiological functions are computed along this timeline and aggregated within phenological bins. Each signal is evaluated for its correlation with the target trait and normalized via sigmoid transformation. The resulting cumulative memory signals (PhenoMeNals) serve as predictors for Leave One Out Cross Validation (LOOCV) using multiple linear regression. Outputs include regression coefficients, variable importance and model diagnostics.</em>
