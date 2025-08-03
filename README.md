@@ -137,42 +137,61 @@ The C# source code for the phenology calibration engine is included in the repos
 ## Getting Started
 
 The **PhenoMeNals** framework is built around two functions:  
-1️⃣ **`phenologyCalibration()`** – calibrates the underlying phenology model using BBCH field observations and weather data.  
+1️⃣ **`phenologyCalibration()`** – calibrates the phenology model using BBCH field observations and weather data.  
 2️⃣ **`runPhenomenals()`** – computes eco-physiological memory signals and predicts traits.
 
 ---
 
 ### 1. `phenologyCalibration()`
 
-This function runs the **PhenoMeNals** phenology model by passing weather data and phenological observations (BBCH) directly from R to the underlying C# executable.  
-Users do not need to manage configuration files or binaries manually — all paths and execution logic are handled internally.
+This function performs **calibration** of the PhenoMeNals phenology model using weather data and BBCH phenological observations.  
+It automatically prepares input files and calls the embedded C# engine — users do not need to handle configuration files manually.
 
 ---
 
-#### **Required Inputs**
+#### **Example**
 
-- **`weather_data`**: A data frame containing **hourly or daily weather data**.  
-  Must include at least the following columns (aliases are supported):  
+```r
+result <- phenologyCalibration(
+  weather_data = weather_df,              # hourly or daily weather data
+  referenceBBCH = bbch_df,                # BBCH phenological observations
+  phenomenalsParameters = phenomenalsParameters,  # parameter list
+  start_year = 2010,
+  end_year = 2020,
+  sites = "ColliOrientali",               # or "all"
+  varieties = "CabernetS",                # or "all"
+  iterations = 300,
+  timestep = "daily"                      # "daily" or "hourly"
+)
+```
 
-  | Column              | Aliases (recognized)                                        | Units       |
-  |---------------------|-------------------------------------------------------------|-------------|
-  | `Site`              | site, station, location                                     | –           |
-  | `DateTime` / `Date` | date, datetime, timestamp                                   | Date (POSIXct or `yyyy-mm-dd`) |
-  | `Hour` (if hourly)  | hour, hr                                                    | 0–23        |
-  | `Temperature`       | temp, temperature, t2m                                     | °C          |
-  | `Tmax` (if daily)   | tmax, maxtemp, t2mmax                                       | °C          |
-  | `Tmin` (if daily)   | tmin, mintemp, t2mmin                                       | °C          |
-  | `Precipitation`     | prec, rainfall, rain, prectotcorr                           | mm          |
-  | `RelativeHumidity`  | rh, humidity, relhumidity                                   | %           |
-  | `WindSpeed`         | wind, ws                                                    | m/s         |
-  | `Radiation`         | rad, solar, solarrad                                        | MJ/m² (daily) or W/m² (hourly) |
-  | `Latitude`          | latitude, lat                                               | decimal deg |
+# Outputs:
+# result$parameters → Calibrated parameter table (per site × variety)
+# result$phenology  → Simulated BBCH time series
 
-  **Example (daily):**
+#### Input parameters
+##### 1. weather_data
+A data frame containing hourly or daily weather data.
+The function supports flexible column names (aliases are automatically detected).
 
-  ```text
-  Site,Date,Tmax,Tmin,Precipitation,WindSpeed,RelativeHumidityMax,RelativeHumidityMin,Radiation,Latitude
-  ColliOrientali,2007-04-02,21.2,8.5,0,1.5,85,42,17.2,44.0
+| Column                | Aliases (recognized)                       | Units                          | Time step    | Mandatory? |
+| --------------------- | ------------------------------------------ | ------------------------------ | ------------ | ---------- |
+| `Site`                | site, station, location                    | –                              | hourly/daily | **Yes**    |
+| `DateTime` / `Date`   | date, datetime, timestamp                  | Date (POSIXct or `yyyy-mm-dd`) | hourly/daily | **Yes**    |
+| `Hour`                | hour, hr                                   | 0–23                           | hourly only  | **Yes**    |
+| `Temperature`         | temp, temperature, t2m                     | °C                             | hourly only  | **Yes**    |
+| `Tmax`                | tmax, maxtemp, t2mmax                      | °C                             | daily   | **Yes**    |
+| `Tmin`                | tmin, mintemp, t2mmin                      | °C                             | daily   | **Yes**    |
+| `Precipitation`       | prec, rainfall, rain, prectotcorr          | mm                             | hourly/daily | **Yes**    |
+| `RelativeHumidity`    | rh, humidity, relhumidity                  | %                              | hourly | Optional   |
+| `RelativeHumidityMax` | rhmax, humiditymax, relhumiditymax, hummax | %                              | daily   | Optional   |
+| `RelativeHumidityMin` | rhmin, humiditymin, relhumiditymin, hummin | %                              | daily   | Optional   |
+| `WindSpeed`           | wind, ws                                   | m/s                            | hourly/daily | Optional   |
+| `Radiation`           | rad, solar, solarrad                       | MJ/m² (daily) or W/m² (hourly) | hourly/daily | Optional   |
+| `Latitude`            | latitude, lat                              | decimal deg                    | hourly/daily | **Yes**   |
+
+
+
 ---
 ## License
 This project is licensed under the **Creative Commons Attribution-NonCommercial 3.0 Unported (CC BY-NC 3.0)** license.
