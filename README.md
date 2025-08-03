@@ -41,7 +41,6 @@ The framework explicitly accounts for the **two-year reproductive cycle of grape
 - ⚙️ Hybrid architecture: **R interface + C# computation core**  
 - 🪟 **Windows-only** (MacOS and Linux support under development)
 
-  
 ---
 
 ## Description
@@ -121,15 +120,15 @@ This will:
     Include the precompiled C# backend executable required for model execution (Windows only, cross-platform support under development)
 
 ### Access Documentation    
-All core functions (swellCalibration, swellValidation, etc.) include Roxygen-style documentation. You can access help directly from R:
+The two functions phenologyCalibration and runPhenomenals include Roxygen-style documentation. You can access help directly from R:
 
 ```r
-?swellCalibration
-?swellValidation
+?phenologyCalibration
+?runPhenomenals
 ```
 Or use the RStudio help viewer by placing your cursor inside the function and pressing F1.
 
-The C# source code for the SWELL computational engine is included in the repository under the /src directory. A precompiled Windows .exe is also bundled under inst/extdata/Windows/.
+The C# source code for the phenology calibration engine is included in the repository under the /src directory. A precompiled Windows .exe is also bundled under inst/extdata/Windows/.
 
     📦 The R functions handle all the configuration and execution automatically by calling this backend executable.
 
@@ -137,95 +136,31 @@ The C# source code for the SWELL computational engine is included in the reposit
 
 ## Getting Started
 
-The SWELL model consists of two main processes: **calibration** and **validation**. For each process, two functions are available in the R package to allow users executing SWELL on a dataframe with multiple pixels or to perform batch executions for heavy simulation jobs. 
+The **PhenoMeNals** framework consists of two main processes: **phenology model calibration** and **trait prediction**.  
+For each process, functions are available in the R package to run analyses on a single site/variety or perform batch executions for larger datasets.
 
 ---
 
-### 1. `swellCalibration()`
+### 1. `phenologyCalibration()`
 
-Performs **calibration** of the SWELL model using NDVI or EVI time series and weather data via a **multi-start simplex algorithm**. Returns all outputs in R as structured data frames.
+Performs **calibration** of the phenology model using BBCH phenological observations and weather data via a **multi-start simplex algorithm**.  
+Returns all outputs in R as structured data frames.
 
 **Usage:**
 ```r
-result <- swellCalibration(
+result <- phenologyCalibration(
   weather_data = your_weather_df,
-  vegetation_data = your_ndvi_or_evi_df,
-  vegetationIndex = "NDVI",
-  SWELLparameters = parameter_list,
-  species = "beech",
-  start_year = 2012,
-  end_year = 2021,
-  simplexes = 3,
-  iterations = 1000
+  referenceBBCH = your_bbch_df,
+  varieties = "Cabernet",
+  sites = "Colli_Orientali",
+  start_year = 2006,
+  end_year = 2024,
+  iterations = 100
 )
 
 # Output structure:
-# result$calibration_results     → Daily NDVI simulations and rates
-# result$parameters_pixels       → Calibrated parameters by pixel
-# result$parameters_group        → Mean ± SD grouped by vegetation Group
-```
-### 2. `swellCalibrationBatch()`
-
-Performs batch calibration. Ideal for automated pipelines or high-performance computing setups. Saves CSV outputs to disk (no in-memory R return).
-
-**Usage:**
-```r
-swellCalibrationBatch(
-  weather_data = your_weather_df,
-  vegetation_data = your_ndvi_or_evi_df,
-  vegetationIndex = "EVI",
-  SWELLparameters = parameter_list,
-  species = "beech",
-  start_year = 2012,
-  end_year = 2021,
-  simplexes = 5,
-  iterations = 500,
-  outPath = "path/to/output/"
-)
-```
-📂 Output files:
-
-    parameters_group.csv – Calibrated mean ± SD per group
-    results_by_pixel.csv – Time series of NDVI simulation
-
-### 3. swellValidation()
-
-Performs model validation using calibrated parameters and weather/NDVI input. Returns simulation results as an R data frame.
-
-Usage:
-```r
-val <- swellValidation(
-  weather_data = your_weather_df,
-  vegetation_data = your_ndvi_or_evi_df,
-  vegetationIndex = "NDVI",
-  SWELLparameters = parameter_list,
-  SWELLparametersCalibrated = param_group_df,
-  species = "beech",
-  start_year = 2012,
-  end_year = 2021,
-  validationReplicates = 10
-)
-
-# Output: val → Simulated NDVI/EVI with uncertainty bands (percentiles)
-```
-
-### 4. swellValidationBatch()
-
-Runs batch validation, ideal for integration with automated systems. Results are saved to disk.
-```r
-val <- swellValidation(
-  weather_data = your_weather_df,
-  vegetation_data = your_ndvi_or_evi_df,
-  vegetationIndex = "NDVI",
-  SWELLparameters = parameter_list,
-  SWELLparametersCalibrated = param_group_df,
-  species = "beech",
-  start_year = 2012,
-  end_year = 2021,
-  validationReplicates = 10
-)
-
-# Output: val → Simulated NDVI/EVI with uncertainty bands (percentiles)
+# result$calibration_results     → Simulated phenological stages (BBCH)
+# result$parameters_site_variety → Calibrated parameters per site × variety
 ```
 ---
 
