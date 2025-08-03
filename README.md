@@ -54,7 +54,7 @@ Grapevine phenology is a cornerstone of yield and quality prediction, as environ
 - 🌡️ **Eco-physiological functions** capturing temperature, radiation, water balance, and stress signals  
 - 📊 **Statistical modeling** of cumulative environmental effects (*memory signals*) on yield and quality  
 
-Validated across **multi-site, multi-variety datasets**, PhenoMeNals consistently achieved **R² > 0.8** for yield, yield components, and quality traits, outperforming many existing forecasting approaches.
+Validated across **multi-site, multi-variety datasets**, PhenoMeNals consistently achieved **R² > 0.8** for yield, yield components, and quality traits.
 
 📄 **See the full description of PhenoMeNals in the paper**:  
 *The PhenoMeNals framework for grapevine yield and quality prediction* (Bregaglio & Bajocco, 2025)
@@ -91,7 +91,7 @@ Eco-physiological functions (e.g., temperature suitability, drought stress, radi
 ## Installation
 
 > ⚠️ **Platform notice:**  
-> SWELL currently runs **only on Windows** due to its use of compiled C# executables.  
+> PhenoMeNals currently runs **only on Windows** due to its use of compiled C# executables for phenology calibration.  
 > Cross-platform support (macOS/Linux) is under active development.
 
 ### 1. Install R
@@ -101,27 +101,24 @@ Make sure **R (version ≥ 4.0)** is installed:
 
 ### 2. Install Required R Packages
 
-Before installing SWELL, make sure the following R packages are installed:
+If your R environment does not already have **devtools**, install it first:
 
 ```r
-install.packages(c("devtools", "data.table", "jsonlite"))
+install.packages("devtools")
 ```
 
-### 3. Install SWELL from GitHub
+### 3. Install PhenoMeNals from GitHub
 
-You can install the SWELL package directly using devtools:
-
+You can install the PhenoMeNals package directly using devtools:
 ```r
-devtools::install_github("GeoModelLab/SWELL")
+devtools::install_github("GeoModelLab/phenomenals")
 ```
 
 This will:
 
-    Download the SWELL R package
-
+    Download the PhenoMeNals R package
     Compile and install it locally
-
-    Include the precompiled C# executable required for model execution (Windows only)
+    Include the precompiled C# backend executable required for model execution (Windows only, cross-platform support under development)
 
 ### Access Documentation    
 All core functions (swellCalibration, swellValidation, etc.) include Roxygen-style documentation. You can access help directly from R:
