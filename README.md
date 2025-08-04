@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/images/phenomenals_logo.png" alt="phenomenals logo" width="200"/>
+  <img src="docs/images/phenomenals_logo.png" alt="phenomenals logo" width="400"/>
 </p>
 
 # PhenoMeNals - Phenology Memory Signals
