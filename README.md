@@ -390,7 +390,14 @@ Eight eco-physiological functions are computed along a standardized phenological
 | `WindF`    | Wind-induced stress, exponential decline beyond Wmin                          |
 | `DiseaseF` | Disease favorability (P. viticola) based on temperature and wetness duration  |
 
-All functions are calculated hourly, aggregated daily, and normalized. They serve as potential predictors for downstream modeling.
+All functions are calculated hourly, aggregated daily, and normalized. They serve as potential predictors for downstream modeling. See the figure below
+
+<figure>
+<p align="center">
+  <img src="./docs/images/phenomenalsFunctions.png"  width="400">
+  </p>
+  <figcaption align="center"><em>Photoperiodic unit for dormancy induction. The shades correspond to the 40-60<sup>th</sup> and 25-75<sup>th</sup> percentiles of the distribution generated with limiting photoperiod ranging from 12 to 14.5 hours and non limiting photoperiod from 11.5 to 13 hours.</em></figcaption>
+</figure>
 
 #### Equations
 Nonlinear temperature response (Yan and Hunt, 1999):
