@@ -27,6 +27,8 @@ The framework explicitly accounts for the **two-year reproductive cycle of grape
 - [Description](#description)
 - [Installation](#installation)
 - [Getting Started](#getting-started)
+  - [phenologyCalibration()](#phenologycalibration)
+  - [runPhenomenals()][#runPhenomenals] 
 - [Support](#support)
 - [License](#license)
 - [How It Works](#how-it-works)
