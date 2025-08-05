@@ -27,7 +27,7 @@ The framework explicitly accounts for the **two-year reproductive cycle of grape
 - [Description](#description)
 - [Installation](#installation)
 - [Getting Started](#getting-started)
-  - [phenologyCalibration()](#phenologyCalibration)
+  - [phenologyCalibration()](#phenologyCalibration())
   - [runPhenomenals()][#runPhenomenals] 
 - [Support](#support)
 - [License](#license)
@@ -145,7 +145,7 @@ The **PhenoMeNals** framework is built around two functions:
 
 ---
 
-### 1. `phenologyCalibration()`
+### phenologyCalibration()
 
 This function performs **calibration** of the PhenoMeNals phenology model using weather data and BBCH phenological observations.  
 It automatically prepares input files and calls the embedded C# engine — users do not need to handle configuration files manually.
@@ -197,8 +197,8 @@ The function supports flexible column names (aliases are automatically detected)
 
 Notes:
 
-    For daily data, only Tmax, Tmin, and Precipitation are strictly required.
-    For hourly data, only Temperature, Precipitation, Hour, and DateTime are required.
+    For daily data, only Tmax, Tmin, Precipitation and Latitude are strictly required.
+    For hourly data, only Temperature, Precipitation, Hour, DateTime and Latitude are required.
     If RelativeHumidity or Radiation are missing, they are automatically estimated using Tmax, Tmin, precipitation, and latitude.
 
 Example (daily):
@@ -211,14 +211,14 @@ ColliOrientali,2007-04-02,7,12.1,0,82,1.4,120,44.0
 ##### 2. referenceBBCH
 A data frame containing BBCH phenological observations.
 This dataset must include at least the following columns:
-| Column      | Description                                      | Example        | Mandatory? |
-| ----------- | ------------------------------------------------ | -------------- | ---------- |
-| `Variety`   | Variety name                                     | CabernetS      | **Yes**    |
-| `Site`      | Site name (must match sites in `weather_data`)   | ColliOrientali | **Yes**    |
-| `Latitude`  | Latitude of the site (decimal degrees)           | 44.0           | **Yes**    |
-| `Longitude` | Longitude of the site (decimal degrees)          | 11.0           | **Yes**    |
-| `Date`      | Date of observation (format: `yyyy-mm-dd`)       | 2007-04-02     | **Yes**    |
-| `BBCH`      | BBCH growth stage (numeric code, see BBCH scale) | 8, 65          | **Yes**    |
+| Column      | Description                                      | Example        
+| ----------- | ------------------------------------------------ | -------------- 
+| `Variety`   | Variety name                                     | CabernetS      |
+| `Site`      | Site name (must match sites in `weather_data`)   | ColliOrientali |
+| `Latitude`  | Latitude of the site (decimal degrees)           | 44.0           |
+| `Longitude` | Longitude of the site (decimal degrees)          | 11.0           |
+| `Date`      | Date of observation (format: `yyyy-mm-dd`)       | 2007-04-02     |
+| `BBCH`      | BBCH growth stage (numeric code, see BBCH scale) | 8, 65          |
 
 Example:
 Variety,Site,Latitude,Longitude,Date,BBCH
@@ -265,7 +265,89 @@ Notes:
 | `iterations` | Number of iterations for the simplex algorithm                                                          | `100`     |
 | `timestep`   | Time step of `weather_data` (**"daily"** or **"hourly"**)                                               | `"daily"` |
 
+### runPhenomenals()
+Execute the Phenomenals pipeline from R, automatically handling weather and phenological data, generating smoothed signals, filtering for multicollinearity, and applying stepwise regression to model yield and other agronomic traits.
 
+---
+
+#### **Example**
+
+```r
+result <- runPhenomenals(
+  weather_data, # same structure than in phenologyCalibration
+  target_data, 
+  phenomenalsParameters, #same than in phenologyCalibration
+  start_year = 2000,
+  end_year = 2025,
+  sites = "all",
+  varieties = "all",
+  timestep = "daily",
+  target_traits = c("yield"),
+  rolling_window = 5,
+  evaluation_range = list(c(0, 200)),
+  multicollinearity_threshold = 0.8,
+  max_phenomenals = 4,
+  bin_size = 1
+)
+```
+#### Outputs:
+```r
+result$data$smoothed          → Raw phenological signals (TempF, HeatF, etc.)
+result$data$processed         → Processed signals (aggregated, normalized)
+result$data$signalized        → Sigmoid-transformed signals
+result$selection$correlations → Correlations of signals with target traits
+result$selection$stepwise_step → Selected top predictors via stepwise regression
+result$results$predictions    → Predicted vs. observed values (normalized + original scale)
+result$results$diagnostics    → Model performance metrics (R², RMSE, MAE, nMBE)
+result$results$relative_importance → Variable importance via LMG
+```
+#### Input parameters
+##### 1. weather_data
+The very same structure than in [phenologyCalibration](#phenologyCalibration)
+
+##### 2. target_data
+A data frame of phenological and/or target trait observations.
+Required columns:
+| Column      | Description                                                          | Example     |
+| ----------- | -------------------------------------------------------------------- | ----------- |
+| `Site`      | Site name (must match `Site` in `weather_data`)                      | `napa`      |
+| `Latitude`  | Latitude of the site (decimal degrees)                               | `38.3`      |
+| `Longitude` | Longitude of the site (decimal degrees)                              | `122.0`     |
+| `Variety`   | Variety name                                                         | `CabernetS` |
+| `Year`      | Harvest year                                                         | `1994`      |
+| `Variable`  | Trait name to be modeled (e.g., `"yield"`, `"brix"`, `"malic_acid"`) | `brix`      |
+| `Value`     | Observed value for the trait                                         | `23.2`      |
+
+Notes:
+
+    This table is used to link phenological signals with observed traits.
+    Multiple traits can be provided per site and variety by using different Variable values.
+    The Value column must be numeric and non-empty.
+    Internal normalization and alignment with climate/BBCH cycles is handled automatically.
+
+Example:
+Site,Latitude,Longitude,Variety,Year,Variable,Value
+napa,38.3,122,CabernetS,1994,brix,23.2
+napa,38.3,122,CabernetS,1995,brix,23.6
+
+##### 3. phenomenalsParameters
+A nested list of model parameters (typically from phenomenals::phenomenalsParameters). Each parameter includes calibration metadata and value ranges.
+This is the very same structure than in [phenologyCalibration](#phenologyCalibration)  
+
+##### 4. Other arguments
+| Argument                      | Description                                                                                       | Default          |
+| ----------------------------- | ------------------------------------------------------------------------------------------------- | ---------------- |
+| `start_year`                  | First year of simulation or calibration                                                           | `2000`           |
+| `end_year`                    | Last year of simulation or calibration                                                            | `2025`           |
+| `sites`                       | Sites to include (character vector or `"all"`)                                                    | `"all"`          |
+| `varieties`                   | Varieties to include (character vector or `"all"`)                                                | `"all"`          |
+| `timestep`                    | Time resolution of `weather_data`: `"daily"` or `"hourly"`                                        | `"daily"`        |
+| `target_traits`               | Traits to model (e.g., `"yield"`, `"brix"`)                                                       | `"yield"`        |
+| `rolling_window`              | Window size (in days) for smoothing phenological signals                                          | `5`              |
+| `evaluation_range`            | List of cycle percentage ranges to evaluate (0–200 scale; 0–100 dormancy, 101–200 growing season) | `list(c(0,200))` |
+| `multicollinearity_threshold` | Threshold above which correlated predictors are dropped                                           | `0.8`            |
+| `max_phenomenals`             | Max number of predictors to retain per model after stepwise regression                            | `4`              |
+| `bin_size`                    | Resolution (% cycle) to bin phenological signals                                                  | `1`              |
 
 
 ---
