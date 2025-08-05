@@ -168,7 +168,7 @@ result <- phenologyCalibration(
 )
 ```
 
-##### Outputs:
+#### Outputs:
 ```r
 result$parameters → Calibrated parameter table (per site × variety)
 result$phenology  → Simulated BBCH time series
@@ -408,7 +408,7 @@ All functions are calculated hourly, aggregated daily, and normalized. They serv
 </figure>
 
 #### Equations
-### 🌡️ Equation 1: Temperature Suitability for Growth (TempF)
+##### 🌡️ Temperature Suitability for Growth (TempF)
 
 $$
 \text{TempF} =
@@ -425,7 +425,7 @@ This equation simulates the nonlinear temperature response for plant growth usin
 
 ---
 
-### 🥶 Equation 2: Cold Stress Response (ColdF)
+##### 🥶 Cold Stress Response (ColdF)
 
 $$
 \text{ColdF} =
@@ -440,7 +440,7 @@ This sigmoid function models the decline in physiological activity as temperatur
 
 ---
 
-### 🔥 Equation 3: Heat Stress Response (HeatF)
+##### 🔥 Heat Stress Response (HeatF)
 
 $$
 \text{HeatF} =
@@ -455,7 +455,7 @@ This sigmoid function simulates the impact of extreme heat. The response decreas
 
 ---
 
-### ☀️ Equation 4: Light Limitation (LightF)
+##### ☀️ Light Limitation (LightF)
 
 $$
 \text{LightF} = 1 - \exp\left( -k_{\text{light}} \cdot \frac{\text{PAR}}{L_{\text{max}}} \right)
@@ -465,7 +465,7 @@ An asymptotic saturation function modeling the effect of photosynthetically acti
 
 ---
 
-### 💨 Equation 5: Vapor Pressure Deficit Limitation (VPDeF)
+##### 💨 Vapor Pressure Deficit Limitation (VPDeF)
 
 $$
 \text{VPDeF} =
@@ -479,7 +479,7 @@ This function represents stress induced by high evaporative demand. Limitation i
 
 ---
 
-### 💧 Equation 6: Drought Stress Indicator (DroughtF)
+##### 💧 Drought Stress Indicator (DroughtF)
 
 $$
 \text{DroughtF} = \frac{(ET_c - \text{Prec})}{(ET_c + \text{Prec})} \cdot \frac{1}{2} + \frac{1}{2}
@@ -489,7 +489,7 @@ A normalized aridity index based on crop transpiration (ETc) and precipitation (
 
 ---
 
-### 🌱 Equation 7: Crop Coefficient (Kc)
+###### 🌱 Crop Coefficient (Kc)
 
 $$
 K_c =
@@ -503,7 +503,7 @@ Describes the development of canopy cover through phenology using BBCH scale. Us
 
 ---
 
-### 🌬️ Equation 8: Wind-Induced Stress (WindF)
+##### 🌬️ Wind-Induced Stress (WindF)
 
 $$
 \text{WindF} =
@@ -517,7 +517,7 @@ Models the exponential decline in physiological performance under high wind spee
 
 ---
 
-### 🦠 Equation 9: Disease Favorability (DiseaseF)
+##### 🦠 Disease Favorability (DiseaseF)
 
 $$
 \text{DiseaseF} =
@@ -529,10 +529,6 @@ $$
 $$
 
 Evaluates the infection risk of **P. viticola** based on temperature suitability and wetness duration. Uses the same temperature response as TempF.
-
----
-
-
 
 ---
 
