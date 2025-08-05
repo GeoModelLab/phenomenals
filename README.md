@@ -326,9 +326,7 @@ Notes:
     Internal normalization and alignment with climate/BBCH cycles is handled automatically.
 
 Example:
-Site,Latitude,Longitude,Variety,Year,Variable,Value
-napa,38.3,122,CabernetS,1994,brix,23.2
-napa,38.3,122,CabernetS,1995,brix,23.6
+<pre><code class="language-csv"> Site,Latitude,Longitude,Variety,Year,Variable,Value napa,38.3,122,CabernetS,1994,brix,23.2 napa,38.3,122,CabernetS,1995,brix,23.6 napa,38.3,122,CabernetS,1996,brix,23.7 napa,38.3,122,CabernetS,1997,brix,24.5 napa,38.3,122,CabernetS,1998,brix,24.0 napa,38.3,122,CabernetS,1999,brix,24.3 </code></pre>
 
 ##### 3. phenomenalsParameters
 A nested list of model parameters (typically from phenomenals::phenomenalsParameters). Each parameter includes calibration metadata and value ranges.
@@ -394,7 +392,7 @@ All functions are calculated hourly, aggregated daily, and normalized. They serv
 
 <figure>
 <p align="center">
-  <img src="./docs/images/phenomenals_functions.png"  width="400">
+  <img src="./docs/images/phenomenals_functions.png"  width="700">
   </p>
   <figcaption align="center"><em>Photoperiodic unit for dormancy induction. The shades correspond to the 40-60<sup>th</sup> and 25-75<sup>th</sup> percentiles of the distribution generated with limiting photoperiod ranging from 12 to 14.5 hours and non limiting photoperiod from 11.5 to 13 hours.</em></figcaption>
 </figure>
