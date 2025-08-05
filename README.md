@@ -28,7 +28,7 @@ The framework explicitly accounts for the **two-year reproductive cycle of grape
 - [Installation](#installation)
 - [Getting Started](#getting-started)
   - [phenologyCalibration()](#phenologyCalibration())
-  - [runPhenomenals()][#runPhenomenals] 
+  - [runPhenomenals()](#runPhenomenals()) 
 - [Support](#support)
 - [License](#license)
 - [How It Works](#how-it-works)
@@ -303,7 +303,7 @@ result$results$relative_importance → Variable importance via LMG
 ```
 #### Input parameters
 ##### 1. weather_data
-The very same structure than in [phenologyCalibration](#phenologyCalibration)
+The very same structure than in [phenologyCalibration()](#phenologyCalibration)
 
 ##### 2. target_data
 A data frame of phenological and/or target trait observations.
@@ -368,205 +368,96 @@ Under the following terms:
 
 ## How it works
 
-This section provides a detailed look at the internal mechanics of the SWELL model, including the mathematical and physiological functions used to simulate NDVI/EVI.
+PhenoMeNals integrates eco-physiological signals across the grapevine phenological cycle to predict yield and quality traits. This section explains the underlying biological logic and modeling steps.
 
 > 🧠 Recommended for advanced users and researchers interested in model structure and ecophysiological logic.
 
-These are the functions used by SWELL to simulate the plant response to air temperature and photoperiod in different phenological phases.
-<figure>
-<p align="center">
-  <img src="./docs/images/all_functions.png" width="700">
-  </p>
-  <figcaption align="center"><em>Functions used to simulate the effect of photoperiod and temperature on plant phenological phases</em></figcaption>
-</figure>
 
-Every day and during phenophase _x_, a photothermal unit _PTU<sub>x</sub>_, (day<sup>-1</sup>, eq. 1) is computed, summed, and divided by the phenophase photothermal requirements _PTR<sub>x</sub>_ (days, eq. 2) to derive its percentage of completion _PC<sub>x</sub>_ (%). 
+---
 
-$$PTU_x = PU_x \times TU_x \tag{1}$$
-$$PC_x = \frac{\sum_{1}^{n} PTU_x}{PTR_x} \times 100\tag{2}$$
+### 1. Eco-physiological Functions
 
-where _PU<sub>x</sub>_ (0-1, day<sup>-1</sup>) and _TU<sub>x</sub>_ (0-1, day<sup>-1</sup>) are the photoperiodic and thermal components of _PTU<sub>x</sub>_, respectively, and _n_ is the number of days elapsed from the start of the _x_ phenophase. 
+Eight eco-physiological functions are computed along a standardized phenological timeline. These functions translate weather variables into biologically meaningful indices, normalized between 0 (inhibitory) and 1 (optimal). Each function is parameterized using literature values, with uncertainty bands representing inter-study variation.
 
-### Dormancy season
-The [Dormancy induction](#dormancy-induction) is stimulated by short and cold days. Once induced, the dormancy season unfolds through [Endodormancy](#endodormancy), when chilling accumulation occurs, and [Ecodormancy](#ecodormancy), whose progress is promoted by longer days and warm temperatures.
+| Function   | Description                                                                   |
+| ---------- | ----------------------------------------------------------------------------- |
+| `TempF`    | Temperature suitability for growth (nonlinear response with Tmin, Topt, Tmax) |
+| `ColdF`    | Cold stress response, sigmoidal decay below Tcold                             |
+| `HeatF`    | Heat stress response, sigmoidal decay above Theat                             |
+| `LightF`   | Radiation limitation, exponential saturation above Lmax (PAR-based)           |
+| `VPDeF`    | Vapor pressure deficit limitation, sigmoidal decay between VPDmin and VPDmax  |
+| `DroughtF` | Water stress indicator based on transpiration vs. precipitation               |
+| `WindF`    | Wind-induced stress, exponential decline beyond Wmin                          |
+| `DiseaseF` | Disease favorability (P. viticola) based on temperature and wetness duration  |
 
-#### Dormancy induction
-The following equations (3 and 4) are used to draw the logistic function displayed in the figure below, which is used to estimate the photoperiodic unit for dormancy induction _PU<sub>DI</sub>_.
+All functions are calculated hourly, aggregated daily, and normalized. They serve as potential predictors for downstream modeling.
 
+#### Equations
+Nonlinear temperature response (Yan and Hunt, 1999):
 $$
-P_{\mathrm{DI\_mid}} = 0.5 \cdot (P_{\mathrm{DI\_l}} + P_{\mathrm{DI\_nl}}) \tag{3}
-$$
-
-$$
-PU_{\mathrm{DI}} = \begin{cases}
-  0 & \text{if } D_l \geq P_{\mathrm{DI\_l}} \\
-  1 & \text{if } D_l \leq P_{\mathrm{DI\_nl}} \\
-  \frac{1}{1 + e^{10/(P_{\mathrm{DI\_l}} - P_{\mathrm{DI\_nl}}) \cdot (D_l - P_{\mathrm{DI\_mid}})}} & \text{elsewhere}
-\end{cases} \tag{4}
-$$
-
-where _P<sub>DI\_mid</sub>_ (hours) is the midpoint of the logistic function increasing from _P<sub>DI\_l</sub>_ (hours) to _P<sub>DI\_nl</sub>_ (hours), i.e., the limiting and non-limiting day length for dormancy induction, respectively; _Dl_ (hours) is the day length.
-
-<figure>
-<p align="center">
-  <img src="./docs/images/PU_DI_doc.png"  width="400">
-  </p>
-  <figcaption align="center"><em>Photoperiodic unit for dormancy induction. The shades correspond to the 40-60<sup>th</sup> and 25-75<sup>th</sup> percentiles of the distribution generated with limiting photoperiod ranging from 12 to 14.5 hours and non limiting photoperiod from 11.5 to 13 hours.</em></figcaption>
-</figure>
-
-
-The thermal unit for dormancy induction are derived with another logistic function, using equations 5 and 6.
-
-$$
-T_{\mathrm{DI\_mid}} = 0.5 \cdot (T_{\mathrm{DI\_l}} + T_{\mathrm{DI\_nl}}) \tag{5}
-$$
-
-$$
-TU_{\mathrm{DI}} =
+\text{TempF} =
 \begin{cases}
-0 & \text{if } T \geq T_{\mathrm{DI\_l}} \\
-1 & \text{if } T_{\mathrm{l}} \leq T_{\mathrm{DI\_nl}} \\
-\frac{1}{1 + e^{10/(T_{\mathrm{DI\_l}} - T_{\mathrm{DI\_nl}}) \cdot (T - T_{\mathrm{DI\_mid}})}} & \text{elsewhere}
+0 & \text{if } T < T_{\text{min}} \text{ or } T > T_{\text{max}} \\
+\left( \frac{T_{\text{max}} - T}{T_{\text{max}} - T_{\text{opt}}} \right)
+\cdot
+\left( \frac{T - T_{\text{min}}}{T_{\text{opt}} - T_{\text{min}}} \right)^{\left( \frac{T_{\text{opt}} - T_{\text{min}}}{T_{\text{max}} - T_{\text{opt}}} \right)}
+& \text{otherwise}
 \end{cases}
-\tag{6}
 $$
 
-where _T<sub>DI\_mid</sub>_ (°C) is the midpoint of the logistic function increasing from _T<sub>DI\_l</sub>_ (°C) to _T<sub>DI\_nl</sub>_ (°C), i.e., the limiting and non-limiting temperature for dormancy induction, respectively; _T_ (°C) is the average daily air temperature.
+---
 
-<figure>
-<p align="center">
-  <img src="./docs/images/TU_DI_doc.png"  width="400">
-  </p>
-   <figcaption align="center"><em>Thermal units for dormancy induction. The shades correspond to the 40-60<sup>th</sup> and 25-75<sup>th</sup> percentiles of the distribution generated with limiting temperature ranging from 17 to 22 °C and non limiting temperatre from 3 to 8 °C.</em></figcaption>
-</figure>
+### 2. Phenology-Based Binning & Correlation Analysis
 
-Each day, _PU<sub>DI</sub>_ and _TU<sub>DI</sub>_ are multiplied to give the daily photothermal unit of dormancy induction _PTU<sub>DI</sub>_ and the respective completion percentage _PC<sub>DI</sub>_
+Each eco-physiological signal is:
 
-#### Endodormancy
-After dormancy induction is completed, the endodormancy proceeds along with chilling units’ accumulation, computed according to the following equations 7 and 8. The chilling units are computed hourly, therefore the daily dynamic of air temperature is simulated from daily maximum and minimum air temperature. For more details, you can refer to [Soil Physics with BASIC](https://shop.elsevier.com/books/soil-physics-with-basic/campbell/978-0-444-42557-7).
+1. Smoothed using a rolling mean (default: 3 days)
+2. Discretized along a 0–400 phenological timeline (default: 1-bin resolution)
 
-$$
-CU_{\text{mid}} = 
-\begin{cases}
-  0.5 \cdot (T_{\mathrm{EN\_l}\downarrow} + T_{\mathrm{EN\_nl}\downarrow}) & \text{if } T_h \leq T_{\mathrm{EN\_nl}\downarrow} \leq T_{\mathrm{EN\_l}\downarrow}, \\
-  0.5 \cdot (T_{\mathrm{EN\_l}\uparrow} + T_{\mathrm{EN\_nl}\uparrow}) & \text{if } T_{\mathrm{EN\_nl}\uparrow} \leq T_h \leq T_{\mathrm{EN\_l}\uparrow}.
-\end{cases} \tag{7}
-$$
+This alignment captures biological stages rather than calendar dates. Pairwise correlations among signals are computed to detect multicollinearity. Signals with r > 0.9 are screened, and the least redundant signal is retained.
 
-$$
-CU_{\text{EN}} =
-\begin{cases}
-0 & \text{if } T_h \leq T_{\mathrm{EN\_l}\downarrow} \text{ or } T_h \geq T_{\mathrm{EN\_l}\uparrow}, \\
-1 & \text{if } T_{\mathrm{EN\_nl}\downarrow} \leq T_h \leq T_{\mathrm{EN\_nl}\uparrow}, \\
-\frac{1}{1 + e^{-10/(T_{\mathrm{EN\_l}\downarrow} - T_{\mathrm{EN\_nl}\downarrow}) \cdot (T_h - CU_{\text{mid}})}} & \text{if } T_{\mathrm{EN\_l}\downarrow} < T_h < T_{\mathrm{EN\_nl}\downarrow}, \\
-\frac{1}{1 + e^{10/(T_{\mathrm{EN\_l}\uparrow} - T_{\mathrm{EN\_nl}\uparrow}) \cdot (T_h - CU_{\text{mid}})}} & \text{if } T_{\mathrm{EN\_nl}\uparrow} < T_h < T_{\mathrm{EN\_l}\uparrow}.
-\end{cases} \tag{8}
-$$
+Each bin's correlation with target traits (e.g., yield, brix) is evaluated using Pearson’s r and associated p-value. Trait values are min–max normalized within each site–variety combination to \[–1, 1], generating a correlation profile across the phenological cycle.
 
+---
 
-where _T<sub>EN\_l↓</sub>_ (°C) and _T<sub>EN\_l↑</sub>_ (°C) are the lower and upper limiting temperature for chilling units accumulation, and _T<sub>EN\_nl↓</sub>_ (°C) and _T<sub>EN\_nl↑</sub>_ (°C) are the lower and upper not-limiting thresholds for chilling units accumulation. Daily chilling units (_CU<sub>EN\_d</sub>_, day<sup>-1</sup>) are computed summing _CU<sub>EN</sub>_ (hour<sup>-1</sup>), and the endodormancy completion (_PC<sub>EN</sub>_, %) is derived as for dormancy induction. 
-The resulting function is displayed below.
+### 3. Sigmoid Scaling, Weighting, and Signal Aggregation
 
-<figure>
- <p align="center">
-  <img src="./docs/images/CU_doc.png"  width="400">
-  </p>
-  <figcaption align="center"><em>Chilling units accumulation. The shades correspond to the 40-60<sup>th</sup> and 25-75<sup>th</sup> percentiles of the distribution generated with lower limiting chilling temperature ranging from -5 to -2 °C, lower non limiting chilling temperature from 1 to 5°C, upper non limiting temperature from 2 to 6 °C and upper limiting temperature from 9 to 12 °C</em></figcaption>
-</figure>
+Smoothed signals are normalized using a sigmoid transformation:
 
+```
+scaled_i = 1 / (1 + exp(-10 * (f_i - f̃) / ((f_90 - f_10) / 2)))
+```
 
-#### Ecodormancy
-High _PC<sub>EN</sub>_ values accelerates the progress of the [ecodormancy](#ecodormancy) (_PTU<sub>EC_</sub>, day<sup>-1</sup>), whose completion is stimulated by long days and warm temperatures. The following equations 8-10 are used to estimate photothermal units during the ecodormancy phase.
+* `f_i`: Signal value in year *i*
+* `f̃`: Median value across years for that bin
+* `f_10`, `f_90`: 10th and 90th percentiles
 
-$$
-P_r = \frac{D_l}{P_{\mathrm{EC\_nl}}} \tag{9}
-$$
+Then, signals are weighted by correlation strength:
 
-$$
-T_{\mathrm{EC\_mid}} = 0.5 \cdot T_{\mathrm{EC\_nl}} + (1 - P_r) \cdot T_{\mathrm{EC\_nl}} \tag{10}
-$$
+```
+weighted_i = scaled_i * r * (1 - p)
+```
 
-$$
-PTU_{\mathrm{EC}} = \frac{PC_{\mathrm{EN}} + (1 - PC_{\mathrm{EN}}) \cdot P_r}{1 + e^{-10/(T_{\mathrm{EC\_nl}} \cdot P_r \cdot (T - T_{\mathrm{EC\_mid}}))}} \cdot \frac{1}{100} \tag{11}
-$$
+Finally, weighted signals are summed across bins to produce cumulative PhenoMeNals:
 
-where _Pr_ is the ratio between _Dl_ and the not-limiting photoperiod for ecodormancy (_P<sub>EC\_nl</sub>_, hour); _T<sub>EC\_mid</sub>_ (°C) is the midpoint of the logistic function reproducing the temperature effect. The function asymptote depends both on _PC<sub>EN</sub>_ and _Pr_. The figures below show the behaviour of these equations at two levels of endodormancy completion and different day lengths.
+```
+PhenoMeNal_{i,j} = Σ weighted_{i,j}(bin) for bin = 1 to 400
+```
 
-<figure>
-  <p align="center">
-    <img src="./docs/images/PTU_EC_20_doc.png" width="400">
-    <img src="./docs/images/PTU_EC_80_doc.png" width="400">
-  </p>
- <figcaption align="center"><em>Photothermal units for ecodormancy progress. The shades correspond to the 40-60<sup>th</sup> and 25-75<sup>th</sup> percentiles of the distribution generated with non limiting  temperature ranging from 18 to 22 °C, and non limiting photoperiod ranging from 10 to 13 hours</em></figcaption>
-</figure>
+---
 
-### Growing season
-When _PC<sub>EC</sub>_ = 100%, the ecodormancy phase is completed and the growing season begins. 
+### 4. Model Selection and Trait Prediction
 
-#### Growth and greendown
-Forcing thermal units (_TU<sub>GR</sub>_, day<sup>-1</sup>) are computed with the equation 11, which is taken from [Yan and Hunt, 1999](https://www.ggebiplot.com/Yan-Hunt1999a.pdf)
+A stepwise variable selection using AIC (via `stepAIC` from the `MASS` package) identifies the most informative subset of PhenoMeNals per bin (max predictors: 4). For each bin:
 
+* A multiple linear regression model is trained using selected PhenoMeNals
+* Leave-One-Out Cross-Validation (LOOCV) is applied (`caret` package)
+* Metrics computed include R², RMSE, MAE, and nMBE
 
-$$
-TU_{\mathrm{GR}} = \left( \frac{T_{\mathrm{max}} - T}{T_{\mathrm{max}} - T_{\mathrm{opt}}} \right) \cdot \left( \frac{T - T_{\mathrm{min}}}{T_{\mathrm{opt}} - T_{\mathrm{min}}} \right)^{\frac{T_{\mathrm{opt}} - T_{\mathrm{min}}}{T_{\mathrm{max}} - T_{\mathrm{opt}}}}
-$$
+Predictor importance is assessed using the LMG method (Groemping, 2006), which decomposes R² by averaging contributions across all possible predictor orderings. Diagnostic plots include prediction–observation correlation, residual analysis, and phenology–prediction alignment.
 
-where _T<sub>min</sub>_, _T<sub>opt</sub>_ and _T<sub>max</sub>_ are the minimum, optimum, and maximum tree cardinal forcing temperatures (°C). The growth and greendown phases are simulated as a function of _TU<sub>GR</sub>_ only.
-The resulting function is drawn below.
+---
 
-
-<figure>
- <p align="center">
-  <img src="./docs/images/TU_GR_doc.png"  width="400">
-  </p>
-  <figcaption align="center"><em>Forcing accumulation during growth, greendown and decline. The shades correspond to the 40-60<sup>th</sup> and 25-75<sup>th</sup> percentiles of the distribution generated with minimum temperature ranging from 3 to 7 °C, optimum temperature from 16 to 22°C, and maximum temperature from 28 and 35 °C</em></figcaption>
-</figure>
-
-#### Decline
-During the decline phenophase, the photothermal unit (_PTU<sub>DE</sub>_, day<sup>-1</sup>) is simulated as the weighted average of _TU<sub>GR</sub>_ and the photothermal unit for [dormancy induction](#dormancy-induction), whose relative contribution depends on the percentage completion of the decline phenophase _PC<sub>DE</sub>_ (%), as in the equation below.
-
-$$
-PTU_{\mathrm{DE}} = TU_{\mathrm{GR}} \cdot (1 - PC_{\mathrm{DE}}) + PTU_{\mathrm{DI}} \cdot PC_{\mathrm{DE}} \tag{13}
-$$
-
-When _PC<sub>DE</sub>_ = 100%, the growing season ends, and the dormancy season restarts.
-
-### NDVI simulation
-SWELL simulates the pixel-level  dynamic (_NDVI<sub>swell</sub>_, unitless) by integrating a daily NDVI rate (day<sup>-1</sup>) within a lower (_NDVI<sub>min</sub>_, unitless) and upper (_NDVI<sub>min</sub>_ + _NDVI<sub>amp</sub>_, unitless) limit:
-
-$$
-NDVI_{\text{swell}} = \begin{cases}
-  NDVI_{\text{min}} & \text{if } \sum_{1}^{n} NDVI_{r} \leq NDVI_{\text{min}} \\
-  \sum_{1}^{n} NDVI_{r} & \text{if } NDVI_{\text{min}} < \sum_{1}^{n} NDVI_{r} < NDVI_{\text{min}} + NDVI_{\text{amp}} \\
-  NDVI_{\text{min}} + NDVI_{\text{amp}} & \text{if } \sum_{1}^{n} NDVI_{r} \geq NDVI_{\text{min}} + NDVI_{\text{amp}}
-\end{cases}\tag{15}
-$$
-
-where _NDVI<sub>amp</sub>_ is the NDVI amplitude and _n_ are the days elapsed from simulation start. During the dormancy season, _NDVI<sub>swell</sub>_ decreases with cold temperatures (_NDVI<sub>r\_D↓</sub>_), and increases when days are lengthening and forcing temperatures favour the awakening of the understory vegetation (_NDVI<sub>r\_D↑</sub>_). The following equations are used for this purpose.
-
-$$
-NDVI_{D\downarrow} = \begin{cases}
-  0 & \text{if } T \geq T_{\text{min}} + T_{\text{shift}} \\
-  NDVI_{D\downarrow*} \cdot \frac{\left| (T_{\text{min}} + T_{\text{shift}}) - T \right|}{10} & \text{if } T < T_{\text{min}} + T_{\text{shift}}
-\end{cases}\tag{16}
-$$
-
-
-$$
-NDVI_{D\uparrow} = \begin{cases}
-  NDVI_{D\uparrow*} \cdot TU_{\text{under}} & \text{if } T \geq T_{\text{min}} + T_{\text{shift}} \text{ and } Dl > Dl_y \\
-  0 & \text{if } T < T_{\text{min}} + T_{\text{shift}} \text{ and } Dl > Dl_y
-\end{cases}\tag{17}
-$$
-
-where _NDVI<sub>D*</sub>_ (unitless) and _NDVI<sub>D*</sub>_ (unitless) are pixel-specific parameters representing the minimum NDVI decrease and the maximum NDVI increase during the dormancy season; _T<sub>shift</sub>_ (°C) represents the pixel-specific sensitivity of the understory vegetation to thermal cues; _TU<sub>under</sub> (day<sup>-1</sup>_) is the understory thermal unit, computed substituting _T<sub>min</sub>_ with _T<sub>min</sub>_ + _T<sub>shift</sub>_ (°C) in the equation for  [forcing](#growth-and-greendown) accumulation; _Dl<sub>y</sub>_ (hours) is the day length of the previous day. On the first dormancy day, the NDVI at senescence is initialized, ensuring it doesn't fall below the minimum allowed value (_NDVI<sub>min</sub>_). When average temperature drops below T_min + T_shift, the endodormancy contribution is calculated using a scaled temperature deficit, modulated by the normalized distance to NDVImin. When day length is increasing and temperatures exceed the thermal threshold, the ecodormancy contribution is computed using thermal forcing units and scaled by the proximity of current NDVI to its maximum (_NDVI<sub>max</sub>_). The final daily _NDVI<sub>r</sub> during dormancy thus combines both endodormancy and ecodormancy contribution.
-
-During the growth phenophase, the daily NDVI rate (_NDVI<sub>GR</sub>_, day<sup>-1</sup>) refers to the dominant plant species and increases as a function of _TU<sub>GR</sub>_ (day<sup>-1</sup>) and _PC<sub>GR</sub>_ (%), i.e., the percentage completion of the growth phenophase.
-
-$$
- NDVI_{\text{GR}} = NDVI_{\text{GR*}} \cdot TU_{\text{GR*}} \cdot \frac{(100 - PC_{\text{GR}})}{100} 
-$$
-
-where _NDVI<sub>GR*</sub>_ (day<sup>-1</sup>) is a pixel-specific parameter corresponding to the maximum _NDVI<sub>swell</sub>_ increase during the growth phase. After reaching the seasonal peak, _NDVI<sub>swell</sub>_ decreases during the greendown phenophase (NDVIr,GD, equation 18), and is further reduced during the decline phase (NDVIr,DE, equation 19). 
+This modular pipeline ensures interpretability, trait-specific adaptation, and the ability to explore how environmental drivers affect yield and quality along the grapevine phenological cycle.
 
 
