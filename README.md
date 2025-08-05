@@ -202,11 +202,16 @@ Notes:
     If RelativeHumidity or Radiation are missing, they are automatically estimated using Tmax, Tmin, precipitation, and latitude.
 
 Example (daily):
+```csv
 Site,Date,Tmax,Tmin,Precipitation,WindSpeed,RelativeHumidityMax,RelativeHumidityMin,Radiation,Latitude
 ColliOrientali,2007-04-02,21.2,8.5,0,1.5,85,42,17.2,44.0
+```
+
 Example (hourly):
+```csv
 Site,DateTime,Hour,Temperature,Precipitation,RelativeHumidity,WindSpeed,Radiation,Latitude
 ColliOrientali,2007-04-02,7,12.1,0,82,1.4,120,44.0
+```
 
 ##### 2. referenceBBCH
 A data frame containing BBCH phenological observations.
@@ -221,9 +226,11 @@ This dataset must include at least the following columns:
 | `BBCH`      | BBCH growth stage (numeric code, see BBCH scale) | 8, 65          |
 
 Example:
+```csv
 Variety,Site,Latitude,Longitude,Date,BBCH
 CabernetS,ColliOrientali,44,11,2007-04-02,8
 CabernetS,ColliOrientali,44,11,2007-05-16,65
+```
 
 ##### 3. phenomenalsParameters
 A nested list of model parameters. This list is typically loaded from
@@ -241,7 +248,6 @@ list[
 ```
 
 Example:
-
 ```r
 phenomenalsParameters$grapevine$leaf$thermalTime <- list(
   min = 100,
@@ -291,6 +297,7 @@ result <- runPhenomenals(
 )
 ```
 #### Outputs:
+
 ```r
 result$data$smoothed          → Raw phenological signals (TempF, HeatF, etc.)
 result$data$processed         → Processed signals (aggregated, normalized)
@@ -326,7 +333,12 @@ Notes:
     Internal normalization and alignment with climate/BBCH cycles is handled automatically.
 
 Example:
-<pre><code class="language-csv"> Site,Latitude,Longitude,Variety,Year,Variable,Value napa,38.3,122,CabernetS,1994,brix,23.2 napa,38.3,122,CabernetS,1995,brix,23.6 napa,38.3,122,CabernetS,1996,brix,23.7 napa,38.3,122,CabernetS,1997,brix,24.5 napa,38.3,122,CabernetS,1998,brix,24.0 napa,38.3,122,CabernetS,1999,brix,24.3 </code></pre>
+```csv
+Site,Latitude,Longitude,Variety,Year,Variable,Value
+napa,38.3,122,CabernetS,1994,brix,23.2
+napa,38.3,122,CabernetS,1995,brix,23.6
+napa,38.3,122,CabernetS,1996,brix,23.7
+```
 
 ##### 3. phenomenalsParameters
 A nested list of model parameters (typically from phenomenals::phenomenalsParameters). Each parameter includes calibration metadata and value ranges.
@@ -346,7 +358,6 @@ This is the very same structure than in [phenologyCalibration](#phenologyCalibra
 | `multicollinearity_threshold` | Threshold above which correlated predictors are dropped                                           | `0.8`            |
 | `max_phenomenals`             | Max number of predictors to retain per model after stepwise regression                            | `4`              |
 | `bin_size`                    | Resolution (% cycle) to bin phenological signals                                                  | `1`              |
-
 
 ---
 ## License
@@ -369,7 +380,6 @@ Under the following terms:
 PhenoMeNals integrates eco-physiological signals across the grapevine phenological cycle to predict yield and quality traits. This section explains the underlying biological logic and modeling steps.
 
 > 🧠 Recommended for advanced users and researchers interested in model structure and ecophysiological logic.
-
 
 ---
 
