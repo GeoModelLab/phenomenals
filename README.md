@@ -394,6 +394,7 @@ All functions are calculated hourly, aggregated daily, and normalized. They serv
 
 #### Equations
 Nonlinear temperature response (Yan and Hunt, 1999):
+
 $$
 \text{TempF} =
 \begin{cases}
