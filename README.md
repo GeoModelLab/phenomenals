@@ -476,6 +476,7 @@ $$
 $$
 
 
+
 This function represents stress induced by high evaporative demand. Limitation increases as VPD surpasses VPDmin.
 
 ---
