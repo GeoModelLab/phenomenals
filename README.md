@@ -394,24 +394,136 @@ All functions are calculated hourly, aggregated daily, and normalized. They serv
 
 <figure>
 <p align="center">
-  <img src="./docs/images/phenomenalsFunctions.png"  width="400">
+  <img src="./docs/images/phenomenals_functions.png"  width="400">
   </p>
   <figcaption align="center"><em>Photoperiodic unit for dormancy induction. The shades correspond to the 40-60<sup>th</sup> and 25-75<sup>th</sup> percentiles of the distribution generated with limiting photoperiod ranging from 12 to 14.5 hours and non limiting photoperiod from 11.5 to 13 hours.</em></figcaption>
 </figure>
 
 #### Equations
-Nonlinear temperature response (Yan and Hunt, 1999):
+### 🌡️ Equation 1: Temperature Suitability for Growth (TempF)
 
 $$
 \text{TempF} =
 \begin{cases}
-0 & \text{if } T < T_{\text{min}} \text{ or } T > T_{\text{max}} \\\\
+0 & \text{if } T < T_{\text{min}} \text{ or } T > T_{\text{max}} \\
 \left( \frac{T_{\text{max}} - T}{T_{\text{max}} - T_{\text{opt}}} \right)
 \cdot
-\left( \frac{T - T_{\text{min}}}{T_{\text{opt}} - T_{\text{min}}} \right)^
-{\left( \frac{T_{\text{opt}} - T_{\text{min}}}{T_{\text{max}} - T_{\text{opt}}} \right)} & \text{otherwise}
+\left( \frac{T - T_{\text{min}}}{T_{\text{opt}} - T_{\text{min}}} \right)^ {
+\left( \frac{T_{\text{opt}} - T_{\text{min}}}{T_{\text{max}} - T_{\text{opt}}} \right)} & \text{otherwise}
 \end{cases}
 $$
+
+This equation simulates the nonlinear temperature response for plant growth using cardinal temperatures: minimum (Tmin), optimum (Topt), and maximum (Tmax). Growth rate peaks at Topt and is zero outside the Tmin–Tmax range.
+
+---
+
+### 🥶 Equation 2: Cold Stress Response (ColdF)
+
+$$
+\text{ColdF} =
+\begin{cases}
+1 & \text{if } T > T_{\text{min}} \\
+0 & \text{if } T < T_{\text{cold}} \\
+\frac{1}{1 + \exp\left(\frac{-10}{|T_{\text{min}} - T_{\text{cold}}|} \cdot (T - \frac{T_{\text{min}} + T_{\text{cold}}}{2}) \right)} & \text{otherwise}
+\end{cases}
+$$
+
+This sigmoid function models the decline in physiological activity as temperature drops below Tmin, reaching zero at a critical cold threshold Tcold.
+
+---
+
+### 🔥 Equation 3: Heat Stress Response (HeatF)
+
+$$
+\text{HeatF} =
+\begin{cases}
+1 & \text{if } T < T_{\text{max}} \\
+0 & \text{if } T > T_{\text{heat}} \\
+\frac{1}{1 + \exp\left(\frac{10}{T_{\text{max}} - T_{\text{heat}}} \cdot (T - \frac{T_{\text{max}} + T_{\text{heat}}}{2}) \right)} & \text{otherwise}
+\end{cases}
+$$
+
+This sigmoid function simulates the impact of extreme heat. The response decreases past Tmax and approaches zero as T approaches Theat.
+
+---
+
+### ☀️ Equation 4: Light Limitation (LightF)
+
+$$
+\text{LightF} = 1 - \exp\left( -k_{\text{light}} \cdot \frac{\text{PAR}}{L_{\text{max}}} \right)
+$$
+
+An asymptotic saturation function modeling the effect of photosynthetically active radiation (PAR) on growth. LightF approaches 1 as PAR increases.
+
+---
+
+### 💨 Equation 5: Vapor Pressure Deficit Limitation (VPDeF)
+
+$$
+\text{VPDeF} =
+\begin{cases}
+1 & \text{if } \text{VPD} < \text{VPD}_{\text{min}} \\
+\frac{1}{1 + \exp\left(k_{\text{VPD}} \cdot (\text{VPD} - \frac{\text{VPD}_{\text{max}} + \text{VPD}_{\text{min}}}{2})\right)} & \text{otherwise}
+\end{cases}
+$$
+
+This function represents stress induced by high evaporative demand. Limitation increases as VPD surpasses VPDmin.
+
+---
+
+### 💧 Equation 6: Drought Stress Indicator (DroughtF)
+
+$$
+\text{DroughtF} = \frac{(ET_c - \text{Prec})}{(ET_c + \text{Prec})} \cdot \frac{1}{2} + \frac{1}{2}
+$$
+
+A normalized aridity index based on crop transpiration (ETc) and precipitation (Prec). Values near 1 indicate water stress.
+
+---
+
+### 🌱 Equation 7: Crop Coefficient (Kc)
+
+$$
+K_c =
+\begin{cases}
+K_{\text{max}} & \text{if } BBCH > 65 \\
+K_{\text{ini}} + (K_{\text{full}} - K_{\text{ini}}) \cdot \frac{1 - \exp(-0.1 \cdot BBCH)}{1 - \exp(-0.1 \cdot 65)} & \text{otherwise}
+\end{cases}
+$$
+
+Describes the development of canopy cover through phenology using BBCH scale. Used to scale ET₀ into ETc.
+
+---
+
+### 🌬️ Equation 8: Wind-Induced Stress (WindF)
+
+$$
+\text{WindF} =
+\begin{cases}
+1 & \text{if } W < W_{\text{min}} \\
+\exp(-k_{\text{wind}} \cdot (W - W_{\text{min}})) & \text{otherwise}
+\end{cases}
+$$
+
+Models the exponential decline in physiological performance under high wind speeds. Applied across the phenological cycle.
+
+---
+
+### 🦠 Equation 9: Disease Favorability (DiseaseF)
+
+$$
+\text{DiseaseF} =
+\begin{cases}
+1 & \text{if } WD > WD_{\text{opt}} \\
+0 & \text{if } WD < WD_{\text{min}} \\
+\frac{WD_{\text{min}} / f(T)}{WD_{\text{opt}}} & \text{otherwise}
+\end{cases}
+$$
+
+Evaluates the infection risk of **P. viticola** based on temperature suitability and wetness duration. Uses the same temperature response as TempF.
+
+---
+
 
 
 ---
