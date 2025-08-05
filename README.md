@@ -471,9 +471,10 @@ $$
 \text{VPDeF} =
 \begin{cases}
 1 & \text{if } \text{VPD} < \text{VPD}_{\text{min}} \\
-\frac{1}{1 + \exp\left(k_{\text{VPD}} \cdot (\text{VPD} - \frac{\text{VPD}_{\text{max}} + \text{VPD}_{\text{min}}}{2})\right)} & \text{otherwise}
+\frac{1}{1 + \exp\left\{ k_{\text{VPD}} \cdot \left( \text{VPD} - \frac{ \text{VPD}_{\text{max}} + \text{VPD}_{\text{min}} }{2} \right) \right\}} & \text{otherwise}
 \end{cases}
 $$
+
 
 This function represents stress induced by high evaporative demand. Limitation increases as VPD surpasses VPDmin.
 
@@ -580,9 +581,5 @@ A stepwise variable selection using AIC (via `stepAIC` from the `MASS` package) 
 * Metrics computed include R², RMSE, MAE, and nMBE
 
 Predictor importance is assessed using the LMG method (Groemping, 2006), which decomposes R² by averaging contributions across all possible predictor orderings. Diagnostic plots include prediction–observation correlation, residual analysis, and phenology–prediction alignment.
-
 ---
-
-This modular pipeline ensures interpretability, trait-specific adaptation, and the ability to explore how environmental drivers affect yield and quality along the grapevine phenological cycle.
-
 
