@@ -471,7 +471,7 @@ $$
 \text{VPDeF} =
 \begin{cases}
 1 & \text{if } \text{VPD} < \text{VPD}_{\text{min}} \\
-\frac{1}{1 + \exp\left\{ k_{\text{VPD}} \cdot \left( \text{VPD} - \frac{ \text{VPD}_{\text{max}} + \text{VPD}_{\text{min}} }{2} \right) \right\}} & \text{otherwise}
+\frac{1}{1 + \exp\left( k_{\text{VPD}} \cdot \left( \text{VPD} - \frac{ \text{VPD}_{\text{max}} + \text{VPD}_{\text{min}} }{2} \right) \right)} & \text{otherwise}
 \end{cases}
 $$
 
