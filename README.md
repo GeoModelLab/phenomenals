@@ -21,6 +21,8 @@ The framework explicitly accounts for the **two-year reproductive cycle of grape
 
 ---
 
+$$ \text{VPDeF} = \begin{cases} 1 & \text{if } \text{VPD} < \text{VPD}{\text{min}} \ \frac{1}{1 + \exp\left( k{\text{VPD}} \cdot \left( \text{VPD} - \frac{ \text{VPD}{\text{max}} + \text{VPD}{\text{min}} }{2} \right) \right)} & \text{otherwise} \end{cases} $$
+
 ## Table of Contents
 
 - [Highlights](#highlights)
