@@ -397,13 +397,14 @@ Nonlinear temperature response (Yan and Hunt, 1999):
 $$
 \text{TempF} =
 \begin{cases}
-0 & \text{if } T < T_{\text{min}} \text{ or } T > T_{\text{max}} \\
+0 & \text{if } T < T_{\text{min}} \text{ or } T > T_{\text{max}} \\\\
 \left( \frac{T_{\text{max}} - T}{T_{\text{max}} - T_{\text{opt}}} \right)
 \cdot
-\left( \frac{T - T_{\text{min}}}{T_{\text{opt}} - T_{\text{min}}} \right)^{\left( \frac{T_{\text{opt}} - T_{\text{min}}}{T_{\text{max}} - T_{\text{opt}}} \right)}
-& \text{otherwise}
+\left( \frac{T - T_{\text{min}}}{T_{\text{opt}} - T_{\text{min}}} \right)^
+{\left( \frac{T_{\text{opt}} - T_{\text{min}}}{T_{\text{max}} - T_{\text{opt}}} \right)} & \text{otherwise}
 \end{cases}
 $$
+
 
 ---
 
