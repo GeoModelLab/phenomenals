@@ -1,0 +1,122 @@
+---
+title: "Phenology Calibration with PhenoMeNals"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Phenology Calibration}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+## 📦 These are the packages we will use....
+```{r table, include=F, warning=FALSE, message=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, include=TRUE, warning=FALSE, message=FALSE}
+library(phenomenals)
+library(kableExtra)
+library(ggplot2)
+library(dplyr)
+library(lubridate)
+```
+
+## 🌱 Goal
+
+This vignette demonstrates how to calibrate phenological parameters for a grapevine variety and site using the `phenologyCalibration()` function.
+
+We’ll use sample datasets included in the package:
+
+- `colliOrientali`: daily weather data
+- `bbchSample`: observed BBCH stages
+- `phenomenalsParameters`: model parameters
+
+## 📦 Load the data
+
+```{r load-data}
+data(colliOrientali)
+data(bbchSample)
+parameters <- phenomenalsParameters
+```
+
+## 🔍 Inspect the inputs
+```{r inspect-inputs}
+kable(head(colliOrientali), caption = "Example weather data") %>%
+  kable_styling(font_size = 10)
+kable(head(bbchSample), caption = "Example BBCH data") %>%
+  kable_styling(font_size = 10)
+```
+
+## ⚙️ Run phenologyCalibration()
+```{r run-calibration}
+calib_result <- phenologyCalibration(
+  weather_data = colliOrientali,
+  referenceBBCH = bbchSample,
+  phenomenalsParameters =phenomenalsParameters,
+  start_year = 2006,
+  end_year = 2012,
+  sites = "ColliOrientali",
+  varieties = "Carmenere",
+  iterations = 100,
+  timestep = "daily"
+)
+```
+
+This will:
+
+- Use the small demo weather and BBCH dataset  
+- Calibrate parameters only for *Carmenere* at *ColliOrientali*  
+- Run 100 iterations (feel free to increase for real applications, the higher the iterations, the longer the time to relax a bit)
+- Takes around  
+
+## 📤 Inspect output object
+
+```{r result-structure}
+str(calib_result, max.level = 1)
+```
+
+This helps users see:
+
+- What’s inside (parameters, phenology)  
+- That it’s a named list  
+
+## 📈 Calibrated parameters
+
+```{r view-parameters}
+filtered_params <- calib_result$parameters |>
+  dplyr::filter(site == "colliorientali", variety == "carmenere")
+
+knitr::kable(filtered_params, caption = "Calibrated parameters for Carmenere at ColliOrientali")
+```
+
+
+All calibrated parameters are within their defined bounds. 🎯
+
+However, if any parameter is very close to its minimum or maximum limit, it's good practice to slightly expand the calibration range and re-run the process. This helps avoid **boundary effects** and ensures the optimization isn’t artificially constrained.
+
+> 📝 Tip: Parameters like `bbch65` or `bbch85` that consistently hit the edge of their range may indicate that your biological assumptions need refining, or that more calibration iterations are needed.
+
+## 🍇 Phenology curve
+
+This is where you show the time series of predicted BBCH stages over time.
+```{r view-results, fig.width = 7, fig.height=3}
+ggplot(calib_result$phenology |> 
+         mutate(Date=as.Date(Date,format='%m/%d/%Y'),
+                year=year(Date)),aes(x=Date)) + 
+  geom_line(aes(y=BBCHPhase))+
+  geom_point(aes(y=BBCHRef))+
+  theme_classic()+
+  geom_line(aes(y=ChillState),col='blue4')
+
+
+```
+  
+
+
+
+The `phenologyCalibration()` function successfully fits thermal and stress-based parameters
+to reproduce observed BBCH stages. This calibrated output can now be passed to
+`runPhenomenals()` for trait modeling.

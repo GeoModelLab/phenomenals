@@ -233,7 +233,7 @@ phenologyCalibration <- function(weather_data,
     jsonlite::write_json(config, config_path, auto_unbox = TRUE, pretty = TRUE)
 
     cmd <- paste(shQuote(exe_path), shQuote(config_path))
-    cat("🟢 Starting phenology calibration\n")
+    cat("🐢 Initiating phenology calibration...\n⌛ Be cool — algorithms are thinking really hard right now.\n🍷 Good wine takes time, and so does this model!\n")
     flush.console()
 
     output <- tryCatch({
@@ -314,6 +314,15 @@ phenologyCalibration <- function(weather_data,
       return(df)
     })) |>
       dplyr::select(-region)
+
+    temporary_files_to_delete <- list_files_out
+
+    # Cleanup any temporary files created during averaging
+    if (length(temporary_files_to_delete) > 0) {
+      message("🧹 Cleaning up temporary output files...")
+      file.remove(temporary_files_to_delete)
+      message(paste0("🗑️ Deleted ", length(temporary_files_to_delete), " temporary output files."))
+    }
 
     #objects returned by the function
     return(list(parameters = df_params_all,
