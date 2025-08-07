@@ -1,6 +1,7 @@
 Package: phenomenals
 Title: Phenology memory signals
 Version: 0.0.0.9000
+URL: https://GeoModelLab.github.io/phenomenals
 Authors@R: 
     person("Simone", "Bregaglio", , "simone.bregaglio@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "YOUR-ORCID-ID"))
@@ -18,3 +19,7 @@ BinaryFiles: inst/bin/phenomenals.exe
 Depends: 
     R (>= 3.5)
 LazyData: true
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
