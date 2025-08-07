@@ -1,9 +1,6 @@
-<table align="center">
-<tr>
-  <td><h1>PhenoMeNals – Phenology Memory Signals</h1></td>
-  <td><img src="docs/images/phenomenals_logo.png" alt="phenomenals logo" width="250"/></td>
-</tr>
-</table>
+# PhenoMeNals – Phenology Memory Signals
+
+<img src="docs/images/phenomenals_logo.png" alt="phenomenals logo" width="250" align="right"/>
 
 [![License: CC BY-NC 3.0](https://img.shields.io/badge/License-CC%20BY--NC%203.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/3.0/)
 [![Platform](https://img.shields.io/badge/platform-Windows--only-blue)](https://microsoft.com)  
