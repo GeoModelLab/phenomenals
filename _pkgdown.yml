@@ -2,3 +2,7 @@ url: https://GeoModelLab.github.io/phenomenals
 template:
   bootstrap: 5
 
+articles:
+  - title: "Getting Started"
+    contents:
+      - phenology-calibration
