@@ -1,8 +1,34 @@
 url: https://GeoModelLab.github.io/phenomenals
+
 template:
   bootstrap: 5
+  bootswatch: solar
+
+navbar:
+  structure:
+    left:
+      - home
+      - reference
+      - articles
 
 articles:
-  - title: "Getting Started"
+  - title: "Get Started"
     contents:
       - phenology-calibration
+
+reference:
+  - title: "Calibration tools"
+    contents:
+      - phenologyCalibration
+      - runPhenomenals
+
+  - title: "Datasets"
+    contents:
+      - colliOrientali
+      - bbchSample
+      - targetSample
+      - phenomenalsParameters
+
+  - title: "Utilities"
+    contents:
+      - listAvailableVarieties

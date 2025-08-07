@@ -2,9 +2,13 @@ Package: phenomenals
 Title: Phenology memory signals
 Version: 0.0.0.9000
 URL: https://GeoModelLab.github.io/phenomenals
-Authors@R: 
-    person("Simone", "Bregaglio", , "simone.bregaglio@gmail.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
+Authors@R: c(
+    person("Simone", "Bregaglio", email = "simone.bregaglio@gmail.com", 
+           role = c("aut", "cre"), 
+           comment = c(ORCID = "0000-0001-8381-2626")),
+    person("Sofia", "Bajocco", email = "sofia.bajocco@crea.gov.it", 
+           role = "aut", 
+           comment = c(ORCID = "0000-0003-2301-9188")))
 Description: What the package does (one paragraph).
 License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
     license
