@@ -4,7 +4,6 @@
 ^dev$
 ^data-raw$
 ^_pkgdown\.yml$
-^docs$
 ^doc$
 ^pkgdown$
 ^Meta$
