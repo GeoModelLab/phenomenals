@@ -757,24 +757,55 @@ runPhenomenals <- function(weather_data,
   }
 
   ## 1c. Join weather and yield data ----
+  # drop target_0 before the first join
+  # Build a full calendar map (all years, all combos), not based on yieldData
+  sites_vars <- df_smoothed |>
+    dplyr::distinct(site, variety, hemisphere)
+
+  calendar_map <- tidyr::expand_grid(
+    sites_vars,
+    harvest_year = seq(start_year, end_year)
+  ) |>
+    dplyr::mutate(
+      # year_0 block meteo start per hemisphere
+      year_meteo_y0 = dplyr::if_else(hemisphere == "northern", harvest_year, harvest_year - 1L),
+      # year_1 block is always the previous meteo year
+      year_meteo_y1 = year_meteo_y0 - 1L
+    ) |>
+    tidyr::pivot_longer(
+      c(year_meteo_y1, year_meteo_y0),
+      names_to = "rel_src",
+      values_to = "year_meteo"
+    ) |>
+    dplyr::mutate(
+      relative_year = dplyr::recode(rel_src,
+                                    year_meteo_y1 = "year_1",
+                                    year_meteo_y0 = "year_0")
+    ) |>
+    dplyr::select(-rel_src)
+
+  # Join phenology with the full calendar (keeps all simulated years)
   df_signal <- df_smoothed |>
-    dplyr::left_join(harvest_map_extended,
-                     by = c("site", "hemisphere","variety", "year_meteo"),
-                     relationship='many-to-many')  |>
-    dplyr::filter(!is.na(harvest_year)) |>
     dplyr::left_join(
-      yieldData  |>
+      calendar_map,                                    # the full-year map I suggested
+      by = c("site","hemisphere","variety","year_meteo"),
+      relationship = "many-to-many"
+    ) |>
+    dplyr::left_join(
+      yieldData |>
         dplyr::select(site, variety, variable, year, target_0),
-      by = c("site", "variety","variable", "harvest_year" = "year", 'target_0'='target_0')
+      by = c("site","variety","harvest_year" = "year") # ⬅️ removed `variable` from the key
     ) |>
     dplyr::mutate(
       phase = dplyr::case_when(
         DormancyCompletion > 0 & CycleCompletion == 0 ~ "dormancy",
         CycleCompletion > 0 ~ "cycle",
-        TRUE ~ NA_character_)
+        TRUE ~ NA_character_
+      )
     ) |>
-    dplyr::filter(!is.na(phase), !is.na(Completion), !is.na(target_0))  |>
+    dplyr::filter(!is.na(phase), !is.na(Completion)) |>
     dplyr::mutate(Completion = as.integer(Completion))
+
 
   #COMPUTING CORRELATIONS----
   df_long <- df_signal |>
@@ -791,9 +822,6 @@ runPhenomenals <- function(weather_data,
       ),
       cyclePerc = bin + (block - 1) * 100 + 100
     )
-
-
-
 
   phenomenals<-phenomenalsCandidates
   # compute correlation function
@@ -862,11 +890,33 @@ runPhenomenals <- function(weather_data,
 
   all_correlations <- dplyr::bind_rows(correlation_results, .id = "target_trait")
 
-  #OUT OBJECT correlation_df!----
+  # OUT OBJECT correlation_df!----
   correlations <- all_correlations |>
-    dplyr::select(site, variety, target_trait, phenomenals, relative_year, Completion, cyclePerc, ChillState,BBCHPhase, cor, p, sign) |>
+    dplyr::select(
+      site, variety, target_trait, phenomenals, relative_year,
+      Completion, cyclePerc, ChillState, BBCHPhase, cor, p, sign
+    ) |>
     dplyr::rename(ecoFunction = phenomenals) |>
-    dplyr::arrange(ecoFunction,cyclePerc)
+    dplyr::arrange(ecoFunction, cyclePerc) |>
+    dplyr::mutate(
+      phenoLabel = dplyr::case_when(
+        # Finestre fisse ENDO/ECO in entrambi gli anni
+        dplyr::between(cyclePerc,   5,  15) ~ "ENDO",
+        dplyr::between(cyclePerc,  45,  55) ~ "ECO",
+        dplyr::between(cyclePerc, 205, 215) ~ "ENDO",
+        dplyr::between(cyclePerc, 245, 255) ~ "ECO",
+
+        # Etichette BBCH per anno relativo
+        relative_year == "year_1" & BBCHPhase %in% 5:15   ~ "DIFF",
+        relative_year == "year_1" & BBCHPhase %in% 50:59  ~ "DEV",
+        relative_year == "year_1" & BBCHPhase >= 10       ~ "SETUP",
+        relative_year == "year_0" & BBCHPhase %in% 5:10   ~ "BUD",
+        relative_year == "year_0" & BBCHPhase %in% 11:69  ~ "FLO",
+        relative_year == "year_0" & BBCHPhase %in% 71:79  ~ "VER",
+        relative_year == "year_0" & BBCHPhase >= 81       ~ "MAT",
+        TRUE ~ NA_character_
+      )
+    )
 
   cat("✅ done\n")
 
@@ -949,7 +999,7 @@ runPhenomenals <- function(weather_data,
 
   cat(glue::glue("\r✅ Phenomenals signals estimated{strrep(' ', 20)}\n"))
 
-  ## 3d. Aggregate by x position----
+  # Pivot to wide format so each variable becomes a column
   df_signal_summary_all_fixed <- df_cumulative_signal_all  |>
     dplyr::group_by(harvest_year, site, variety, cyclePerc, phenomenals, target) |>
     dplyr::summarise(
@@ -958,7 +1008,7 @@ runPhenomenals <- function(weather_data,
       .groups = "drop"
     )
 
-  # Pivot to wide format so each variable becomes a column
+
   signal_index_wide_all <- df_signal_summary_all_fixed |>
     dplyr::select(-signalSumMeanPot) |>
     tidyr::pivot_wider(names_from = phenomenals, values_from = signalSumMean)
@@ -1373,30 +1423,110 @@ runPhenomenals <- function(weather_data,
     dplyr::select(site, variety, target, cyclePerc, term:p.value) |>
     dplyr::arrange()
 
-  # ---- OUT OBJECTS ----
-  # Re-transform normalized predictions and targets to original scale
-  predictions <- all_predictions |>
+  # --- build a FULL scoring frame = all simulated years (with/without target) ----
+  # (use signal_index_wide_all, NOT the "...with_targets" filtered version)
+  valid_keys <- names(top_predictors_list)
+
+  scoring_base <- signal_index_wide_all |>
+    dplyr::mutate(key = paste(site, variety, target, sep = "|")) |>
+    dplyr::filter(key %in% valid_keys) |>
+    dplyr::filter(
+      purrr::map_lgl(cyclePerc, function(x) {
+        any(purrr::map_lgl(evaluation_range, function(rng) x >= rng[1] & x <= rng[2]))
+      })
+    ) |>
+    # add target_0 where it exists (keep NAs for years without targets)
     dplyr::left_join(
       yieldData |>
-        dplyr::select(site, variety, variable, year, max_val, min_val),
-      by = c("site", "variety", "target" = "variable", "harvest_year" = "year",
-             'max_val'='max_val','min_val'='min_val')
+        dplyr::select(site, variety, variable, year, target_0),
+      by = c("site","variety","target" = "variable","harvest_year" = "year")
+    )
+
+  # --- score every (site, variety, target, cyclePerc, harvest_year) with available coefs ---
+  cat(glue::glue("\n🔁 Scoring ALL years (including those without targets)...\n"))
+
+  # 1) scorer that uses scalar keys (not columns in df_grp)
+  score_all <- function(df_grp, coefs_tbl, site, variety, target, cyclePerc) {
+    cf <- coefs_tbl |>
+      dplyr::filter(
+        site      == !!site,
+        variety   == !!variety,
+        target    == !!target,
+        cyclePerc == !!cyclePerc
+      )
+
+    if (nrow(cf) == 0) return(NULL)
+
+    b0 <- cf |>
+      dplyr::filter(term == "(Intercept)") |>
+      dplyr::pull(estimate)
+    b0 <- if (length(b0) == 0) 0 else b0[1]
+
+    betas <- cf |>
+      dplyr::filter(term != "(Intercept)") |>
+      dplyr::select(term, estimate)
+
+    keep_terms <- intersect(betas$term, colnames(df_grp))
+    if (length(keep_terms) == 0) {
+      df_grp$pred_full <- b0
+    } else {
+      X <- as.matrix(df_grp[, keep_terms, drop = FALSE])
+      beta_vec <- betas$estimate[match(keep_terms, betas$term)]
+      df_grp$pred_full <- as.numeric(b0 + X %*% beta_vec)
+    }
+
+    df_grp
+  }
+
+  pred_scored <- scoring_base |>
+    dplyr::group_by(site, variety, target, cyclePerc) |>
+    dplyr::group_modify(~{
+      out <- score_all(
+        df_grp   = .x,
+        coefs_tbl= all_coefficients,
+        site      = .y$site,
+        variety   = .y$variety,
+        target    = .y$target,
+        cyclePerc = .y$cyclePerc
+      )
+      if (is.null(out)) tibble::tibble() else out
+    }) |>
+    dplyr::ungroup()
+
+
+  # --- convert to original units using (site, variety, target) ranges only (no year join) ---
+  yield_ranges <- yieldData |>
+    dplyr::distinct(site, variety, variable, min_val, max_val)
+
+  predictions <- pred_scored |>
+    dplyr::left_join(
+      yield_ranges,
+      by = c("site","variety","target" = "variable")
     ) |>
     dplyr::mutate(
-      pred_original = (pred_full + 1) / 2 * (max_val - min_val) + min_val,
-      target_original = (target_0 + 1) / 2 * (max_val - min_val) + min_val
+      prediction_original = (pred_full + 1) / 2 * (max_val - min_val) + min_val,
+      target_original     = dplyr::if_else(
+        !is.na(target_0),
+        (target_0 + 1) / 2 * (max_val - min_val) + min_val,
+        NA_real_
+      )
     ) |>
-    dplyr::select(site,hemisphere,variety,target,harvest_year,cyclePerc,AridityF:WindF,
-                  target_normalized = target_0,
-                  prediction_normalized = pred_full,
-                  target_original,
-                  prediction_original=pred_original)
+    dplyr::select(
+      site,variety, target, harvest_year, cyclePerc, AridityF:WindF,
+      target_normalized = target_0,
+      prediction_normalized = pred_full,
+      target_original,
+      prediction_original
+    )
 
+  # diagnostics/relimpo/coefficients are unchanged (they’re based on labelled years)
+  diagnostics   <- all_diagnostics
   relative_importance <- all_relimpo
-  coefficients <- all_coefficients
-  diagnostics <- all_diagnostics
+  coefficients  <- all_coefficients
 
 
+
+  # ---- OUT OBJECTS ----
 
   # Cleanup any temporary files created during averaging
   if (length(temporary_files_to_delete) > 0) {
@@ -1426,5 +1556,3 @@ runPhenomenals <- function(weather_data,
     )
   ))
 }
-
-

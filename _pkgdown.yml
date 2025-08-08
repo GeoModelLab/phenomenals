@@ -19,7 +19,7 @@ articles:
       - run-phenomenals
 
 reference:
-  - title: "Calibration tools"
+  - title: "Calibration and prediction functions"
     contents:
       - phenologyCalibration
       - runPhenomenals

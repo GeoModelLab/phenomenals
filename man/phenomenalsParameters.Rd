@@ -14,6 +14,6 @@ phenomenalsParameters
 A nested list of default parameters used in the Phenomenals model.
 }
 \examples{
-parameters_nested[["grapevine"]][["phenomenalsParameters"]][["TminPhenology"]]
+phenomenalsParameters[["grapevine"]][["phenomenalsParameters"]][["TminPhenology"]]
 }
 \keyword{datasets}

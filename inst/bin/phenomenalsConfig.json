@@ -1,22 +1,21 @@
 {
   "settings": {
-    "startYear": 2015,
-    "endYear": 2023,
+    "startYear": 2005,
+    "endYear": 2019,
     "sites": [
       "ColliOrientali"
     ],
     "isCalibration": "false",
     "varieties": [
-      "Merlot",
       "Carmenere"
     ],
     "simplexes": 1,
-    "iterations": 4,
+    "iterations": 1,
     "weatherTimeStep": "daily"
   },
   "paths": {
-    "weatherDir": "C:\\Users\\simoneugomaria.brega\\AppData\\Local\\R\\win-library\\4.4\\phenomenals\\bin\\inputFiles\\weather",
-    "referenceFileBBCH": "C:\\Users\\simoneugomaria.brega\\AppData\\Local\\R\\win-library\\4.4\\phenomenals\\bin\\inputFiles\\referenceData\\referenceBBCH.csv",
-    "plantParamFile": "C:\\Users\\simoneugomaria.brega\\AppData\\Local\\R\\win-library\\4.4\\phenomenals\\bin\\inputFiles\\plant\\phenologyParameters.csv"
+    "weatherDir": "C:\\GitHub\\phenomenals\\inst\\bin\\inputFiles\\weather",
+    "referenceFileBBCH": "C:\\GitHub\\phenomenals\\inst\\bin\\inputFiles\\referenceData\\referenceBBCH.csv",
+    "plantParamFile": "C:\\GitHub\\phenomenals\\inst\\bin\\inputFiles\\plant\\phenologyParameters.csv"
   }
 }

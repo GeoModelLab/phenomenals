@@ -1,0 +1,10 @@
+param, value
+BBCHParameters_bbch08,9.582880961406676
+BBCHParameters_bbch63,78.72734109774163
+BBCHParameters_bbch65,41.03503368219302
+BBCHParameters_bbch68,17.326134027142928
+BBCHParameters_bbch81,60.39419294888617
+BBCHParameters_bbch85,79.2549897477038
+phenomenalsParameters_chillThreshold,8.136842308785187
+phenomenalsParameters_chillingRequirement,172.04787815179236
+phenomenalsParameters_cycleLength,1797.6823519180891

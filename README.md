@@ -1,4 +1,5 @@
-# PhenoMeNals – Phenology Memory Signals
+**PhenoMeNals**  
+*Phe*nology *Me*mory sig*nals*
 
 <img src="man/figures/logo.png" alt="phenomenals logo" width="250" align="topt"/>  
 

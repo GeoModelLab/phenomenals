@@ -1,0 +1,298 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\simoneugomaria.brega\\OneDrive - CREA\\Documenti - geoModelClan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{AAEC6CBC-4F17-497D-8072-0C90BB08D687}|phenomenals.csproj|c:\\users\\simoneugomaria.brega\\onedrive - crea\\documenti - geomodelclan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\readers\\weatherreader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AAEC6CBC-4F17-497D-8072-0C90BB08D687}|phenomenals.csproj|solutionrelative:readers\\weatherreader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AAEC6CBC-4F17-497D-8072-0C90BB08D687}|phenomenals.csproj|c:\\users\\simoneugomaria.brega\\onedrive - crea\\documenti - geomodelclan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\models\\plant\\phenomenals.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AAEC6CBC-4F17-497D-8072-0C90BB08D687}|phenomenals.csproj|solutionrelative:models\\plant\\phenomenals.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AAEC6CBC-4F17-497D-8072-0C90BB08D687}|phenomenals.csproj|c:\\users\\simoneugomaria.brega\\onedrive - crea\\documenti - geomodelclan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\inputfiles\\plant\\phenologyparameters.csv||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{AAEC6CBC-4F17-497D-8072-0C90BB08D687}|phenomenals.csproj|solutionrelative:inputfiles\\plant\\phenologyparameters.csv||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AAEC6CBC-4F17-497D-8072-0C90BB08D687}|phenomenals.csproj|c:\\users\\simoneugomaria.brega\\onedrive - crea\\documenti - geomodelclan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\phenomenalsconfig.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{AAEC6CBC-4F17-497D-8072-0C90BB08D687}|phenomenals.csproj|solutionrelative:phenomenalsconfig.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AAEC6CBC-4F17-497D-8072-0C90BB08D687}|phenomenals.csproj|c:\\users\\simoneugomaria.brega\\onedrive - crea\\documenti - geomodelclan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\optimizer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AAEC6CBC-4F17-497D-8072-0C90BB08D687}|phenomenals.csproj|solutionrelative:optimizer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AAEC6CBC-4F17-497D-8072-0C90BB08D687}|phenomenals.csproj|c:\\users\\simoneugomaria.brega\\onedrive - crea\\documenti - geomodelclan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AAEC6CBC-4F17-497D-8072-0C90BB08D687}|phenomenals.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AAEC6CBC-4F17-497D-8072-0C90BB08D687}|phenomenals.csproj|c:\\users\\simoneugomaria.brega\\onedrive - crea\\documenti - geomodelclan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\models\\plant\\transpiration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AAEC6CBC-4F17-497D-8072-0C90BB08D687}|phenomenals.csproj|solutionrelative:models\\plant\\transpiration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AAEC6CBC-4F17-497D-8072-0C90BB08D687}|phenomenals.csproj|c:\\users\\simoneugomaria.brega\\onedrive - crea\\documenti - geomodelclan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\inputfiles\\referencedata\\referencebbch.csv||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{AAEC6CBC-4F17-497D-8072-0C90BB08D687}|phenomenals.csproj|solutionrelative:inputfiles\\referencedata\\referencebbch.csv||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AAEC6CBC-4F17-497D-8072-0C90BB08D687}|phenomenals.csproj|c:\\users\\simoneugomaria.brega\\onedrive - crea\\documenti - geomodelclan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\inputfiles\\plant\\varietydata.csv||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{AAEC6CBC-4F17-497D-8072-0C90BB08D687}|phenomenals.csproj|solutionrelative:inputfiles\\plant\\varietydata.csv||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AAEC6CBC-4F17-497D-8072-0C90BB08D687}|phenomenals.csproj|c:\\users\\simoneugomaria.brega\\onedrive - crea\\documenti - geomodelclan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\datastructure\\plant\\outputs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AAEC6CBC-4F17-497D-8072-0C90BB08D687}|phenomenals.csproj|solutionrelative:datastructure\\plant\\outputs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AAEC6CBC-4F17-497D-8072-0C90BB08D687}|phenomenals.csproj|c:\\users\\simoneugomaria.brega\\onedrive - crea\\documenti - geomodelclan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\datastructure\\plant\\input.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AAEC6CBC-4F17-497D-8072-0C90BB08D687}|phenomenals.csproj|solutionrelative:datastructure\\plant\\input.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AAEC6CBC-4F17-497D-8072-0C90BB08D687}|phenomenals.csproj|c:\\users\\simoneugomaria.brega\\onedrive - crea\\documenti - geomodelclan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\datastructure\\plant\\cropparameters.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AAEC6CBC-4F17-497D-8072-0C90BB08D687}|phenomenals.csproj|solutionrelative:datastructure\\plant\\cropparameters.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AAEC6CBC-4F17-497D-8072-0C90BB08D687}|phenomenals.csproj|c:\\users\\simoneugomaria.brega\\onedrive - crea\\documenti - geomodelclan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\models\\utilities.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AAEC6CBC-4F17-497D-8072-0C90BB08D687}|phenomenals.csproj|solutionrelative:models\\utilities.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AAEC6CBC-4F17-497D-8072-0C90BB08D687}|phenomenals.csproj|c:\\users\\simoneugomaria.brega\\onedrive - crea\\documenti - geomodelclan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\inputfiles\\weather\\daily\\colliorientali.csv||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{AAEC6CBC-4F17-497D-8072-0C90BB08D687}|phenomenals.csproj|solutionrelative:inputfiles\\weather\\daily\\colliorientali.csv||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AAEC6CBC-4F17-497D-8072-0C90BB08D687}|phenomenals.csproj|c:\\users\\simoneugomaria.brega\\onedrive - crea\\documenti - geomodelclan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\models\\plant\\forcing.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AAEC6CBC-4F17-497D-8072-0C90BB08D687}|phenomenals.csproj|solutionrelative:models\\plant\\forcing.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AAEC6CBC-4F17-497D-8072-0C90BB08D687}|phenomenals.csproj|c:\\users\\simoneugomaria.brega\\onedrive - crea\\documenti - geomodelclan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\models\\plant\\dormancy.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AAEC6CBC-4F17-497D-8072-0C90BB08D687}|phenomenals.csproj|solutionrelative:models\\plant\\dormancy.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AAEC6CBC-4F17-497D-8072-0C90BB08D687}|phenomenals.csproj|c:\\users\\simoneugomaria.brega\\onedrive - crea\\documenti - geomodelclan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\readers\\referencereader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AAEC6CBC-4F17-497D-8072-0C90BB08D687}|phenomenals.csproj|solutionrelative:readers\\referencereader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 6,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "referenceBBCH.csv",
+              "DocumentMoniker": "C:\\Users\\simoneugomaria.brega\\OneDrive - CREA\\Documenti - geoModelClan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\inputFiles\\referenceData\\referenceBBCH.csv",
+              "RelativeDocumentMoniker": "inputFiles\\referenceData\\referenceBBCH.csv",
+              "ToolTip": "C:\\Users\\simoneugomaria.brega\\OneDrive - CREA\\Documenti - geoModelClan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\inputFiles\\referenceData\\referenceBBCH.csv",
+              "RelativeToolTip": "inputFiles\\referenceData\\referenceBBCH.csv",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002120|",
+              "WhenOpened": "2025-08-03T07:45:00.803Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "varietyData.csv",
+              "DocumentMoniker": "C:\\Users\\simoneugomaria.brega\\OneDrive - CREA\\Documenti - geoModelClan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\inputFiles\\plant\\varietyData.csv",
+              "RelativeDocumentMoniker": "inputFiles\\plant\\varietyData.csv",
+              "ToolTip": "C:\\Users\\simoneugomaria.brega\\OneDrive - CREA\\Documenti - geoModelClan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\inputFiles\\plant\\varietyData.csv",
+              "RelativeToolTip": "inputFiles\\plant\\varietyData.csv",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002120|",
+              "WhenOpened": "2025-08-03T07:44:56.217Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Transpiration.cs",
+              "DocumentMoniker": "C:\\Users\\simoneugomaria.brega\\OneDrive - CREA\\Documenti - geoModelClan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\models\\Plant\\Transpiration.cs",
+              "RelativeDocumentMoniker": "models\\Plant\\Transpiration.cs",
+              "ToolTip": "C:\\Users\\simoneugomaria.brega\\OneDrive - CREA\\Documenti - geoModelClan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\models\\Plant\\Transpiration.cs",
+              "RelativeToolTip": "models\\Plant\\Transpiration.cs",
+              "ViewState": "AgIAABoAAAAAAAAAAAAUwCgAAAAUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-15T15:24:07.356Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "phenologyParameters.csv",
+              "DocumentMoniker": "C:\\Users\\simoneugomaria.brega\\OneDrive - CREA\\Documenti - geoModelClan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\inputFiles\\plant\\phenologyParameters.csv",
+              "RelativeDocumentMoniker": "inputFiles\\plant\\phenologyParameters.csv",
+              "ToolTip": "C:\\Users\\simoneugomaria.brega\\OneDrive - CREA\\Documenti - geoModelClan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\inputFiles\\plant\\phenologyParameters.csv",
+              "RelativeToolTip": "inputFiles\\plant\\phenologyParameters.csv",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAAACQAAAAzAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002120|",
+              "WhenOpened": "2025-06-14T09:10:00.843Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Phenomenals.cs",
+              "DocumentMoniker": "C:\\Users\\simoneugomaria.brega\\OneDrive - CREA\\Documenti - geoModelClan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\models\\Plant\\Phenomenals.cs",
+              "RelativeDocumentMoniker": "models\\Plant\\Phenomenals.cs",
+              "ToolTip": "C:\\Users\\simoneugomaria.brega\\OneDrive - CREA\\Documenti - geoModelClan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\models\\Plant\\Phenomenals.cs",
+              "RelativeToolTip": "models\\Plant\\Phenomenals.cs",
+              "ViewState": "AgIAAKAAAAAAAAAAAAAgwLYAAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-14T06:47:46.352Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "optimizer.cs",
+              "DocumentMoniker": "C:\\Users\\simoneugomaria.brega\\OneDrive - CREA\\Documenti - geoModelClan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\optimizer.cs",
+              "RelativeDocumentMoniker": "optimizer.cs",
+              "ToolTip": "C:\\Users\\simoneugomaria.brega\\OneDrive - CREA\\Documenti - geoModelClan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\optimizer.cs",
+              "RelativeToolTip": "optimizer.cs",
+              "ViewState": "AgIAAMgAAAAAAAAAAAAvwN4AAAAYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-10T15:36:54.474Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "weatherReader.cs",
+              "DocumentMoniker": "C:\\Users\\simoneugomaria.brega\\OneDrive - CREA\\Documenti - geoModelClan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\readers\\weatherReader.cs",
+              "RelativeDocumentMoniker": "readers\\weatherReader.cs",
+              "ToolTip": "C:\\Users\\simoneugomaria.brega\\OneDrive - CREA\\Documenti - geoModelClan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\readers\\weatherReader.cs",
+              "RelativeToolTip": "readers\\weatherReader.cs",
+              "ViewState": "AgIAAI8AAAAAAAAAAAAQwM8AAAAYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-10T15:50:03.965Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "outputs.cs",
+              "DocumentMoniker": "C:\\Users\\simoneugomaria.brega\\OneDrive - CREA\\Documenti - geoModelClan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\dataStructure\\Plant\\outputs.cs",
+              "RelativeDocumentMoniker": "dataStructure\\Plant\\outputs.cs",
+              "ToolTip": "C:\\Users\\simoneugomaria.brega\\OneDrive - CREA\\Documenti - geoModelClan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\dataStructure\\Plant\\outputs.cs",
+              "RelativeToolTip": "dataStructure\\Plant\\outputs.cs",
+              "ViewState": "AgIAAC8AAAAAAAAAAIA3wEAAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-18T12:15:52.834Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "input.cs",
+              "DocumentMoniker": "C:\\Users\\simoneugomaria.brega\\OneDrive - CREA\\Documenti - geoModelClan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\dataStructure\\Plant\\input.cs",
+              "RelativeDocumentMoniker": "dataStructure\\Plant\\input.cs",
+              "ToolTip": "C:\\Users\\simoneugomaria.brega\\OneDrive - CREA\\Documenti - geoModelClan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\dataStructure\\Plant\\input.cs",
+              "RelativeToolTip": "dataStructure\\Plant\\input.cs",
+              "ViewState": "AgIAAB0AAAAAAAAAAAAiwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-29T14:26:22.194Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\simoneugomaria.brega\\OneDrive - CREA\\Documenti - geoModelClan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "C:\\Users\\simoneugomaria.brega\\OneDrive - CREA\\Documenti - geoModelClan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAGIBAAAUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-14T06:19:49.754Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "phenomenalsConfig.json",
+              "DocumentMoniker": "C:\\Users\\simoneugomaria.brega\\OneDrive - CREA\\Documenti - geoModelClan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\phenomenalsConfig.json",
+              "RelativeDocumentMoniker": "phenomenalsConfig.json",
+              "ToolTip": "C:\\Users\\simoneugomaria.brega\\OneDrive - CREA\\Documenti - geoModelClan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\phenomenalsConfig.json",
+              "RelativeToolTip": "phenomenalsConfig.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-07-13T18:59:56.785Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "colliOrientali.csv",
+              "DocumentMoniker": "C:\\Users\\simoneugomaria.brega\\OneDrive - CREA\\Documenti - geoModelClan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\inputFiles\\weather\\daily\\colliOrientali.csv",
+              "RelativeDocumentMoniker": "inputFiles\\weather\\daily\\colliOrientali.csv",
+              "ToolTip": "C:\\Users\\simoneugomaria.brega\\OneDrive - CREA\\Documenti - geoModelClan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\inputFiles\\weather\\daily\\colliOrientali.csv",
+              "RelativeToolTip": "inputFiles\\weather\\daily\\colliOrientali.csv",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002120|",
+              "WhenOpened": "2025-07-18T08:52:46.069Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "cropParameters.cs",
+              "DocumentMoniker": "C:\\Users\\simoneugomaria.brega\\OneDrive - CREA\\Documenti - geoModelClan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\dataStructure\\Plant\\cropParameters.cs",
+              "RelativeDocumentMoniker": "dataStructure\\Plant\\cropParameters.cs",
+              "ToolTip": "C:\\Users\\simoneugomaria.brega\\OneDrive - CREA\\Documenti - geoModelClan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\dataStructure\\Plant\\cropParameters.cs",
+              "RelativeToolTip": "dataStructure\\Plant\\cropParameters.cs",
+              "ViewState": "AgIAACEAAAAAAAAAAAAAAC4AAAA0AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-13T18:51:57.429Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "utilities.cs",
+              "DocumentMoniker": "C:\\Users\\simoneugomaria.brega\\OneDrive - CREA\\Documenti - geoModelClan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\models\\utilities.cs",
+              "RelativeDocumentMoniker": "models\\utilities.cs",
+              "ToolTip": "C:\\Users\\simoneugomaria.brega\\OneDrive - CREA\\Documenti - geoModelClan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\models\\utilities.cs",
+              "RelativeToolTip": "models\\utilities.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB8AAAAHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-18T12:18:58.432Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "Dormancy.cs",
+              "DocumentMoniker": "C:\\Users\\simoneugomaria.brega\\OneDrive - CREA\\Documenti - geoModelClan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\models\\Plant\\Dormancy.cs",
+              "RelativeDocumentMoniker": "models\\Plant\\Dormancy.cs",
+              "ToolTip": "C:\\Users\\simoneugomaria.brega\\OneDrive - CREA\\Documenti - geoModelClan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\models\\Plant\\Dormancy.cs",
+              "RelativeToolTip": "models\\Plant\\Dormancy.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-15T16:29:32.216Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "Forcing.cs",
+              "DocumentMoniker": "C:\\Users\\simoneugomaria.brega\\OneDrive - CREA\\Documenti - geoModelClan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\models\\Plant\\Forcing.cs",
+              "RelativeDocumentMoniker": "models\\Plant\\Forcing.cs",
+              "ToolTip": "C:\\Users\\simoneugomaria.brega\\OneDrive - CREA\\Documenti - geoModelClan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\models\\Plant\\Forcing.cs",
+              "RelativeToolTip": "models\\Plant\\Forcing.cs",
+              "ViewState": "AgIAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-15T16:29:32.328Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "referenceReader.cs",
+              "DocumentMoniker": "C:\\Users\\simoneugomaria.brega\\OneDrive - CREA\\Documenti - geoModelClan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\readers\\referenceReader.cs",
+              "RelativeDocumentMoniker": "readers\\referenceReader.cs",
+              "ToolTip": "C:\\Users\\simoneugomaria.brega\\OneDrive - CREA\\Documenti - geoModelClan\\agrarsense\\papers\\phenomenals\\src_phenomenals\\readers\\referenceReader.cs",
+              "RelativeToolTip": "readers\\referenceReader.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-10T15:36:51.11Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -4,5 +4,5 @@
 #'
 #' @format A named list of species → class → parameter → list(min, max, value, calibration).
 #' @examples
-#' parameters_nested[["grapevine"]][["phenomenalsParameters"]][["TminPhenology"]]
+#' phenomenalsParameters[["grapevine"]][["phenomenalsParameters"]][["TminPhenology"]]
 "phenomenalsParameters"

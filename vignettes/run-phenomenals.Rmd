@@ -6,7 +6,19 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+## 🎯 Goal
 
+This vignette shows how to use runPhenomenals() to model grapevine traits (e.g., yield) using eco-physiological memory signals computed along a phenological timeline.
+
+We’ll use the demo datasets included in the package:
+
+    colliOrientali — daily weather data
+
+    targetSample — observed target traits (e.g., yield)
+
+    phenomenalsParameters — model parameters
+    
+    
 ## 📦 These are the packages we will use....
 ```{r table, include=FALSE, warning=FALSE, message=FALSE}
 knitr::opts_chunk$set(
@@ -20,26 +32,13 @@ library(phenomenals)
 
 library(kableExtra) # for tables
 library(plotly) # for plotting
-library(ggplot2) # for plotting
-library(dplyr) # for formatting 
+library(tidyverse) #for formatting
 library(stringr) # for formatting
 library(forcats) # for formatting
-library(lubridate) # for dates
 
 ```
 
-## 🧠 Goal
 
-This vignette shows how to use runPhenomenals() to model grapevine traits (e.g., yield) using eco-physiological memory signals computed along a phenological timeline.
-
-We’ll use the demo datasets included in the package:
-
-    colliOrientali — daily weather data
-
-    targetSample — observed target traits (e.g., yield)
-
-    phenomenalsParameters — model parameters
-    
 ## 📥 Input parameters
 ### 1. weather_data
 The very same structure as in [phenologyCalibration()](/articles/phenology-calibration.html)
@@ -80,7 +79,7 @@ This is the very same structure than in [phenologyCalibration()](/articles/pheno
 | `timestep`                    | Time resolution of `weather_data`: `"daily"` or `"hourly"`                                        | `"daily"`        |
 | `target_traits`               | Traits to model (e.g., `"yield"`, `"brix"`)                                                       | `"yield"`        |
 | `rolling_window`              | Window size (in days) for smoothing phenological signals                                          | `5`              |
-| `evaluation_range`            | List of cycle percentage ranges to evaluate (0–200 scale; 0–100 dormancy, 101–200 growing season) | `list(c(0,200))` |
+| `evaluation_range`            | List of cycle percentage ranges to evaluate (0–400 scale; 0–200 year-1, 200–400 year0) | `list(c(0,200))` |
 | `multicollinearity_threshold` | Threshold above which correlated predictors are dropped                                           | `0.8`            |
 | `max_phenomenals`             | Max number of predictors to retain per model after stepwise regression                            | `4`              |
 | `bin_size`                    | Resolution (% cycle) to bin phenological signals                                                  | `1`              |
@@ -108,12 +107,12 @@ phenomenals_result <- runPhenomenals(
      weather_data = colliOrientali,
      target_data = targetSample,
      phenomenalsParameters = phenomenalsParameters,
-     start_year = 2010,
+     start_year = 2004,
      end_year = 2020,
      sites = "ColliOrientali",
      varieties = "Carmenere",
      timestep = 'daily',
-     rolling_window = 5,
+     rolling_window = 3,
      target_traits = c('yield'),
      evaluation_range = list(c(0,400)),
      multicollinearity_threshold=0.8,
@@ -131,65 +130,30 @@ This will:
 
 ## 🔥 Correlation heatmap across the two-year cycle
 
-```{r correlations-heatmap, fig.width=8, fig.height=12}
+```{r correlations-heatmap, warning = F, fig.width=10, fig.height=11}
 # Start from runPhenomenals output
-correlations <- phenomenals_result$selection$correlations %>%                  # pick trait
-  mutate(
-    # Collapse 0–200 (Year -1) + [skip] + 200–300 (Year 0) into a continuous 0–200 scale
-    cyclePerc_remap = ifelse(cyclePerc > 200, cyclePerc - 100, cyclePerc)
-  )
-
-# Build compact labels for major phenophases
-pheno_labels <- correlations %>%
-  mutate(label = case_when(
-    between(cyclePerc, 5, 15)                 ~ "ENDO",
-    between(cyclePerc, 45, 55)                ~ "ECO",
-    relative_year == "year_1" & BBCHPhase %in% 5:15   ~ "DIFF",
-    relative_year == "year_1" & BBCHPhase %in% 50:59  ~ "DEV",
-    relative_year == "year_1" & BBCHPhase >= 10       ~ "SETUP",
-    relative_year == "year_0" & BBCHPhase %in% 5:10   ~ "BUD",
-    relative_year == "year_0" & BBCHPhase %in% 11:69  ~ "FLO",
-    relative_year == "year_0" & BBCHPhase %in% 71:79  ~ "VER",
-    relative_year == "year_0" & BBCHPhase >= 81       ~ "MAT",
-    TRUE ~ NA_character_
-  )) %>%
-  filter(!is.na(label)) %>%
-  group_by(target_trait, relative_year, label) %>%
-  summarise(Completion = median(Completion, na.rm = TRUE), .groups = "drop") %>%
-  mutate(
-    block        = ifelse(relative_year == "year_1", 0, 2),
-    x_position   = Completion + (block - 1) * 100 + 100,
-    x_position_r = ifelse(x_position > 200, x_position - 100, x_position)
-  )
+correlations <- phenomenals_result$selection$correlations 
 
 ggplot(correlations,
-  aes(x = cyclePerc_remap, y = fct_rev(interaction(site,variety)), fill = cor)
-) +
-  geom_tile(color = "grey95", linewidth = 0.2) +
-  geom_vline(xintercept = 200, linetype = 1, color = "black", size = 0.4) + # visual separator
+       aes(x = cyclePerc, y = cor, fill = cor)) +
+  geom_col(linewidth = 0.2) +
   scale_fill_gradient2(
-    low = "gold3", mid = "white", high = "darkslateblue",
-    midpoint = 0, limits = c(-.8, .8), name = "Pearson r"
+    low = "red",
+    mid = "white",
+    high = "blue",
+    midpoint = 0,
+    limits = c(-.8, .8),       # full correlation range
+    name = "Pearson r"
   ) +
-  geom_text(data = pheno_labels,
-            aes(x = x_position_r, y = -1.4, label = label),
-            inherit.aes = FALSE, angle = 90, vjust = 0.3, hjust = 0, size = 3) +
-  annotate("text", x = 140, y = -.7, label = "Year -1", size = 3, fontface = "italic") +
-  annotate("text", x = 246, y = -.7, label = "Year 0",  size = 3, fontface = "italic") +
-  facet_wrap(~ ecoFunction, ncol = 1) +
-  labs(x = NULL, y = NULL) +
-  guides(fill = guide_colorbar(
-    title.position = "top", title.hjust = 0.5, barwidth = 20, barheight = 0.8
-  )) +
   theme_minimal(base_size = 14) +
+  facet_wrap(~ecoFunction, ncol = 1) +
   theme(
     legend.position = "top",
     panel.grid = element_blank(),
-    axis.text.x = element_blank(),
-    strip.text = element_text(size = 16),
+    strip.text = element_text(size = 14),
     plot.margin = margin(5, 5, 5, 5)
-  )
-
+  ) +
+  labs(x = NULL, y = NULL)
 ```
 
 ## 🌊 Phenomenals dynamics over the cycle (per year)
@@ -203,7 +167,7 @@ pred_long <- predictions %>%
   tidyr::pivot_longer(AridityF:WindF, names_to = "phenomenals", values_to = "value") %>%
   mutate(phenomenals = recode(phenomenals, "AridityF" = "DroughtF"))
 
-p<-ggplot(pred_long) +
+ggplot(pred_long) +
   stat_summary(fun.data ='mean_se',aes(x = cyclePerc, y = value, fill = phenomenals),
                geom = "ribbon", alpha = 0.5) +
   stat_summary(fun.data ='mean_se', aes(x = cyclePerc, y = value, color = phenomenals),
@@ -211,17 +175,10 @@ p<-ggplot(pred_long) +
   facet_grid(phenomenals ~ harvest_year, scales = "free", switch = "y") +
   scale_x_continuous(breaks = seq(200, 400,200)) +
   labs(x = "Phenological completion", y = NULL) +
-  theme_minimal(base_size = 12) +
-  theme(
-    legend.position = "none",
-    panel.grid = element_blank(),
-    strip.text = element_text(size = 12),
-    panel.spacing = unit(0, "lines")
-  )
-ggplotly(p)
+  theme(legend.position = "none")
 ```
 
-## 📈 Observed vs simulated trait over years (with R² in facet titles)
+## 📈 Observed vs simulated trait over years
 
 ```{r obs-vs-sim, fig.width=9, fig.height=4}
 pred <- phenomenals_result$results$predictions
@@ -245,16 +202,42 @@ pred_final <- pred %>%
     )
   )
 
-p<-ggplot(pred_final) +
+ggplot(pred_final) +
   geom_col(aes(harvest_year, target_original, color = target,fill=target), linewidth = .5) +
   geom_point(aes(harvest_year, prediction_original, fill = target), fill = 'blue',
-             shape = 21, size = 4, stroke = 0.7, alpha = .8) +
-  labs(x = NULL, y = NULL) +
-  theme_classic(base_size = 12) +
-  theme(
-    legend.position = "top",
-    panel.grid = element_blank(),
-    strip.text = element_text(size = 12)
+             shape = 21, size = 4, stroke = 0.7, alpha = .8)+
+  ylab('yield (kg plant-1)')
+```
+
+
+
+## 📈 Observed vs simulated trait over phenological bins
+
+```{r diagnostics, fig.width=9, fig.height=4}
+diagnostics<-phenomenals_result$results$diagnostics |> 
+  mutate(
+    cyclePerc_f = factor(cyclePerc, levels = sort(unique(cyclePerc))),
+    var_site_target = paste(variety, site, target, sep = " | ")
   )
-ggplotly(p)
+
+ggplot(diagnostics, aes(x = cyclePerc)) +
+  geom_line(aes(y = R2_loocv), color = "red", linewidth = 0.7) +
+  geom_line(aes(y = RMSE_loocv), color = "blue", linewidth = 0.4) +
+  scale_y_continuous(limits = c(0, 1)) +
+  geom_vline(xintercept = 200, linetype = "dashed", color = "black") +
+  annotate("text", x = 100, y = 0.95, label = "Year -1", fontface = "italic", size = 4) +
+  annotate("text", x = 300, y = 0.95, label = "Year 0", fontface = "italic", size = 4) +
+  annotate("text", x = 50, y = 0.9, label = "Dormancy", color = "gray30", size = 3.5) +
+  annotate("text", x = 250, y = 0.9, label = "Dormancy", color = "gray30", size = 3.5) +
+  annotate("text", x = 150, y = 0.9, label = "Growing", color = "gray30", size = 3.5) +
+  annotate("text", x = 350, y = 0.9, label = "Growing", color = "gray30", size = 3.5) +
+  # Titoli e tema
+  labs(
+    x = "Phenological bin",
+    y = "Performance metrics",
+    linetype = NULL,
+    shape = NULL
+  ) +
+  theme_bw()
+
 ```
