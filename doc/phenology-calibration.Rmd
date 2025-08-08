@@ -7,6 +7,16 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+## 🎯 Goal
+
+This vignette demonstrates how to calibrate phenological parameters for a grapevine variety and site using the `phenologyCalibration()` function.
+
+We’ll use sample datasets included in the package:
+
+- `colliOrientali`: daily weather data
+- `bbchSample`: observed BBCH stages
+- `phenomenalsParameters`: model parameters
+
 
 ## 📦 These are the packages we will use....
 ```{r table, include=F, warning=FALSE, message=FALSE}
@@ -18,21 +28,83 @@ knitr::opts_chunk$set(
 
 ```{r setup, include=TRUE, warning=FALSE, message=FALSE}
 library(phenomenals)
-library(kableExtra)
-library(ggplot2)
-library(dplyr)
-library(lubridate)
+
+library(kableExtra) #for tables
+library(tidyverse) #for formatting
+library(plotly) #for interactive plotting
 ```
 
-## 🌱 Goal
+## 📥 Input parameters
+### 1. weather_data
+A data frame containing hourly or daily weather data.
+The function supports flexible column names (aliases are automatically detected).
 
-This vignette demonstrates how to calibrate phenological parameters for a grapevine variety and site using the `phenologyCalibration()` function.
+| Column                | Aliases (recognized)                       | Units                          | Time step    | Mandatory? |
+| --------------------- | ------------------------------------------ | ------------------------------ | ------------ | ---------- |
+| `Site`                | site, station, location                    | –                              | hourly/daily | **Yes**    |
+| `DateTime` / `Date`   | date, datetime, timestamp                  | Date (POSIXct or chr `mm-dd-yyyy`) | hourly/daily | **Yes**    |
+| `Hour`                | hour, hr                                   | 0–23                           | hourly only  | **Yes**    |
+| `Temperature`         | temp, temperature, t2m                     | °C                             | hourly only  | **Yes**    |
+| `Tmax`                | tmax, maxtemp, t2mmax                      | °C                             | daily   | **Yes**    |
+| `Tmin`                | tmin, mintemp, t2mmin                      | °C                             | daily   | **Yes**    |
+| `Precipitation`       | prec, rainfall, rain, prectotcorr          | mm                             | hourly/daily | **Yes**    |
+| `RelativeHumidity`    | rh, humidity, relhumidity                  | %                              | hourly | Optional   |
+| `RelativeHumidityMax` | rhmax, humiditymax, relhumiditymax, relativehumiditymax, hummax | %                              | daily   | Optional   |
+| `RelativeHumidityMin` | rhmin, humiditymin, relhumiditymin, relativehumiditymin, hummin | %                              | daily   | Optional   |
+| `WindSpeed`           | wind, ws                                   | m/s                            | hourly/daily | Optional   |
+| `Radiation`           | rad, solar, solarrad                       | MJ/m² (daily and hourly) | hourly/daily | Optional   |
+| `Latitude`            | latitude, lat                              | decimal deg                    | hourly/daily | **Yes**   |
 
-We’ll use sample datasets included in the package:
+Notes:
 
-- `colliOrientali`: daily weather data
-- `bbchSample`: observed BBCH stages
-- `phenomenalsParameters`: model parameters
+    For daily data, only Tmax, Tmin, Precipitation and Latitude are strictly required.
+    For hourly data, only Temperature, Precipitation, Hour, DateTime and Latitude are required.
+    If RelativeHumidity or Radiation are missing, they are automatically estimated using Tmax, Tmin, precipitation, and latitude.
+
+### 2. referenceBBCH
+A data frame containing BBCH phenological observations.
+This dataset must include at least the following columns:
+
+| Column      | Description                                      | Example        
+| ----------- | ------------------------------------------------ | -------------- 
+| `Variety`   | Variety name                                     | CabernetS      |
+| `Site`      | Site name (must match sites in `weather_data`)   | ColliOrientali |
+| `Latitude`  | Latitude of the site (decimal degrees)           | 44.0           |
+| `Longitude` | Longitude of the site (decimal degrees)          | 11.0           |
+| `Date`      | Date of observation (format: `yyyy-mm-dd`)       | 2007-04-02     |
+| `BBCH`      | BBCH growth stage (numeric code, see BBCH scale) | 8, 65          |
+
+
+### 3. phenomenalsParameters
+A nested list of model parameters. This list is typically loaded from
+[`phenomenalsParameters`](../reference/phenomenalsParameters.html) and can be customized.
+
+Structure:
+```r
+list[
+  species][[class]][[parameter]] = list(
+    min = <minimum calibration value>,
+    max = <maximum calibration value>,
+    value = <default value>,
+    calibration = <TRUE/FALSE>
+  )
+```
+
+Notes:
+
+    Parameters marked with calibration = TRUE are optimized during calibration.
+    The list is automatically exported to the correct CSV format for the C# engine; you do not need to handle file conversions.
+
+### 4. Other Arguments
+| Argument     | Description                                                                                             | Default   |
+| ------------ | ------------------------------------------------------------------------------------------------------- | --------- |
+| `start_year` | First year of the calibration period                                                                    | `2000`    |
+| `end_year`   | Last year of the calibration period                                                                     | `2025`    |
+| `sites`      | Site names (must match `Site` in `weather_data` and `referenceBBCH`). Use `"all"` to include all sites. | `"all"`   |
+| `varieties`  | Varieties to include (must match `Variety` in `referenceBBCH`). Use `"all"` to include all varieties.   | `"all"`   |
+| `iterations` | Number of iterations for the simplex algorithm                                                          | `100`     |
+| `timestep`   | Time step of `weather_data` (**"daily"** or **"hourly"**)                                               | `"daily"` |
+
 
 ## 📦 Load the data
 
@@ -70,7 +142,7 @@ This will:
 - Use the small demo weather and BBCH dataset  
 - Calibrate parameters only for *Carmenere* at *ColliOrientali*  
 - Run 100 iterations (feel free to increase for real applications, the higher the iterations, the longer the time to relax a bit)
-- Takes around  
+- Takes around 2-3 minutes with a single site x variety combination
 
 ## 📤 Inspect output object
 
@@ -103,19 +175,17 @@ However, if any parameter is very close to its minimum or maximum limit, it's go
 
 This is where you show the time series of predicted BBCH stages over time.
 ```{r view-results, fig.width = 7, fig.height=3}
-ggplot(calib_result$phenology |> 
+p<-ggplot(calib_result$phenology |> 
          mutate(Date=as.Date(Date,format='%m/%d/%Y'),
                 year=year(Date)),aes(x=Date)) + 
   geom_line(aes(y=BBCHPhase))+
   geom_point(aes(y=BBCHRef))+
   theme_classic()+
   geom_line(aes(y=ChillState),col='blue4')
-
+ggplotly(p)
 
 ```
   
-
-
 
 The `phenologyCalibration()` function successfully fits thermal and stress-based parameters
 to reproduce observed BBCH stages. This calibrated output can now be passed to

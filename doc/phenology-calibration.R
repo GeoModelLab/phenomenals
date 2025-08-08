@@ -6,10 +6,10 @@ knitr::opts_chunk$set(
 
 ## ----setup, include=TRUE, warning=FALSE, message=FALSE------------------------
 library(phenomenals)
-library(kableExtra)
-library(ggplot2)
-library(dplyr)
-library(lubridate)
+
+library(kableExtra) #for tables
+library(tidyverse) #for formatting
+library(plotly) #for interactive plotting
 
 ## ----load-data----------------------------------------------------------------
 data(colliOrientali)
@@ -45,13 +45,13 @@ filtered_params <- calib_result$parameters |>
 knitr::kable(filtered_params, caption = "Calibrated parameters for Carmenere at ColliOrientali")
 
 ## ----view-results, fig.width = 7, fig.height=3--------------------------------
-ggplot(calib_result$phenology |> 
+p<-ggplot(calib_result$phenology |> 
          mutate(Date=as.Date(Date,format='%m/%d/%Y'),
                 year=year(Date)),aes(x=Date)) + 
   geom_line(aes(y=BBCHPhase))+
   geom_point(aes(y=BBCHRef))+
   theme_classic()+
   geom_line(aes(y=ChillState),col='blue4')
-
+ggplotly(p)
 
 

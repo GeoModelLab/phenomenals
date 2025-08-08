@@ -1,7 +1,11 @@
+<div align="center">
+
 **PhenoMeNals**  
 *Phe*nology *Me*mory sig*nals*
 
-<img src="man/figures/logo.png" alt="phenomenals logo" width="250" align="topt"/>  
+<img src="man/figures/logo.png" alt="phenomenals logo" width="250" align="top"/>
+
+</div>  
 
 [![License: CC BY-NC 3.0](https://img.shields.io/badge/License-CC%20BY--NC%203.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/3.0/)
 [![Platform](https://img.shields.io/badge/platform-Windows--only-blue)](https://microsoft.com)  
