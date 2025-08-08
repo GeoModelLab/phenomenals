@@ -3,7 +3,7 @@ pkgdown: 2.1.3.9000
 pkgdown_sha: 290661e6bf8dc6bcb4eb738939c5fcc2f52a3247
 articles:
   phenology-calibration: phenology-calibration.html
-last_built: 2025-08-07T21:29Z
+last_built: 2025-08-08T05:51Z
 urls:
   reference: https://GeoModelLab.github.io/phenomenals/reference
   article: https://GeoModelLab.github.io/phenomenals/articles
