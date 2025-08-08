@@ -5,7 +5,7 @@
 #'
 #' @param weather_data A data frame containing hourly weather data. Must include the following columns: `Latitude`, `Longitude`, `DateTime` (as POSIXct or character), `Temperature` (°C), `Precipitation` (mm), `RelativeHumidity` (%), `Radiation` (MJ/m²), and `WindSpeed` (m/s).
 #' @param referenceBBCH A data frame containing BBCH phenological observations. Must include: `Variety`, `Site`, `Latitude`, `Longitude`, `Date`, `BBCH`
-#' @param phenomenalsParameters A nested list of model parameters (usually loaded from `phenomenals::parameters_nested`), structured as `list[species][[class]][[parameter]]`, where each parameter is a list with:
+#' @param phenomenalsParameters A nested list of model parameters (usually loaded from `phenomenals::phenomenalsParameters`), structured as `list[species][[class]][[parameter]]`, where each parameter is a list with:
 #'   - `min`: Minimum calibration value (numeric)
 #'   - `max`: Maximum calibration value (numeric)
 #'   - `value`: Default value used in simulation (numeric)
@@ -24,14 +24,13 @@
 #' @examples
 #' \dontrun{
 #' result <- phenologyCalibration(
-#'   weather_data = weather_df,
-#'   referenceBBCH = bbch_df,
+#'   weather_data = colliOrientali,
+#'   referenceBBCH = bbchSample,
 #'   phenomenalsParameters,
 #'   start_year = 2010,
 #'   end_year = 2020,
 #'   sites = "ColliOrientali",
 #'   varieties = "Merlot",
-#'   simplexes = 2,
 #'   iterations = 300,
 #'   timestep = 'daily'
 #' )

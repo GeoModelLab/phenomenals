@@ -21,7 +21,7 @@ phenologyCalibration(
 
 \item{referenceBBCH}{A data frame containing BBCH phenological observations. Must include: \code{Variety}, \code{Site}, \code{Latitude}, \code{Longitude}, \code{Date}, \code{BBCH}}
 
-\item{phenomenalsParameters}{A nested list of model parameters (usually loaded from \code{phenomenals::parameters_nested}), structured as \code{list[species][[class]][[parameter]]}, where each parameter is a list with:
+\item{phenomenalsParameters}{A nested list of model parameters (usually loaded from \code{phenomenals::phenomenalsParameters}), structured as \code{list[species][[class]][[parameter]]}, where each parameter is a list with:
 \itemize{
 \item \code{min}: Minimum calibration value (numeric)
 \item \code{max}: Maximum calibration value (numeric)
@@ -53,14 +53,13 @@ Users do not need to manage configuration files or binaries manually. All paths 
 \examples{
 \dontrun{
 result <- phenologyCalibration(
-  weather_data = weather_df,
-  referenceBBCH = bbch_df,
+  weather_data = colliOrientali,
+  referenceBBCH = bbchSample,
   phenomenalsParameters,
   start_year = 2010,
   end_year = 2020,
   sites = "ColliOrientali",
   varieties = "Merlot",
-  simplexes = 2,
   iterations = 300,
   timestep = 'daily'
 )

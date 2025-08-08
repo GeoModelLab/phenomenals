@@ -2,7 +2,7 @@ url: https://GeoModelLab.github.io/phenomenals
 
 template:
   bootstrap: 5
-  bootswatch: sketchy
+  bootswatch: cosmo
 
 navbar:
   structure:
@@ -12,9 +12,11 @@ navbar:
       - articles
 
 articles:
-  - title: "Get Started"
+  - title: "Getting Started"
     contents:
+      - how-it-works
       - phenology-calibration
+      - run-phenomenals
 
 reference:
   - title: "Calibration tools"

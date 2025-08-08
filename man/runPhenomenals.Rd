@@ -2,7 +2,7 @@
 % Please edit documentation in R/RunPhenomenals.R
 \name{runPhenomenals}
 \alias{runPhenomenals}
-\title{Run phenologyCalibration}
+\title{Run phenomenals}
 \usage{
 runPhenomenals(
   weather_data,
@@ -24,9 +24,9 @@ runPhenomenals(
 \arguments{
 \item{weather_data}{A data frame containing hourly weather data. Must include the following columns: \code{Latitude}, \code{Longitude}, \code{DateTime} (as POSIXct or character), \code{Temperature} (°C), \code{Precipitation} (mm), \code{RelativeHumidity} (\%), \code{Radiation} (MJ/m²), and \code{WindSpeed} (m/s).}
 
-\item{target_data}{A data frame containing the target data (e.g., yield, brix, berry number, malic acid). The dataframe must include: \code{Variety}, \code{Site}, \code{Latitude}, \code{Longitude}, \code{Date}, and \code{BBCH}.}
+\item{target_data}{A data frame containing the target data (e.g., yield, brix, berry number, malic acid). The dataframe must include: \code{Site}, \code{Latitude}, \code{Longitude}, \code{Variety}, \code{Year}, \code{Variable}, \code{Value}, and \code{Unit}.}
 
-\item{phenomenalsParameters}{A nested list of model parameters (usually loaded from \code{phenomenals::parameters_nested}), structured as \code{list[species][[class]][[parameter]]}, where each parameter is a list with:
+\item{phenomenalsParameters}{A nested list of model parameters (usually loaded from \code{phenomenals::phenomenalsParameters}), structured as \code{list[species][[class]][[parameter]]}, where each parameter is a list with:
 \itemize{
 \item \code{min}: Minimum calibration value (numeric)
 \item \code{max}: Maximum calibration value (numeric)
@@ -59,24 +59,34 @@ You can start with \code{phenomenals::phenomenalsParameters} and modify it as ne
 \item{bin_size}{The range of cycle percentage to aggregate phenomenals (default is 1).}
 }
 \value{
-A named list of data frames containing model outputs, including predictions, diagnostics, coefficients, and processed phenological signals.
+A named list with three components:
+\describe{
+\item{data}{Raw and processed phenological signals}
+\item{selection}{Results from signal selection (correlation, multicollinearity, stepwise)}
+\item{results}{Model diagnostics, predictions, coefficients, and variable importance}
+}
 }
 \description{
-This function runs the Phenomenals method by passing weather data and phenological observations (BBCH) directly from R to the underlying C# executable.
-Users do not need to manage configuration files or binaries manually. All paths and execution logic are handled internally, and only core calibration settings are exposed.
+This function runs the Phenomenals method by passing weather data and target traits (e.g., yield, Brix, sugar) directly from R to the underlying C# executable.
+Users do not need to manage configuration files or binaries manually. All paths and execution logic are handled internally, and only core settings are exposed.
 }
 \examples{
 \dontrun{
 result <- phenologyCalibration(
-  weather_data = weather_df,
-  target_data = bbch_df,
+  weather_data = colliOrientali,
+  target_data = targetSample,
   phenomenalsParameters,
   start_year = 2010,
   end_year = 2020,
   sites = "ColliOrientali",
   varieties = "Merlot",
-  timestep = 'daily'
-)
+  timestep = 'daily',
+  rolling_window = 5,
+  target_traits = c('yield'),
+  evaluation_range = list(c(0,400)),
+  multicollinearity_threshold=0.8,
+  max_phenomenals=4,
+  bin_size=1)
 head(result$phenomenals$processed)
 }
 
