@@ -627,7 +627,7 @@ runPhenomenals <- function(weather_data,
     )
 
 
-  phenomenalsCandidates <- c("TempF",'HeatF','ColdF','LightF','AridityF',"VPDefF","WindF","DiseaseF")
+  phenomenalsCandidates <- c("TempF",'HeatF','ColdF','LightF','DroughtF',"VPDefF","WindF","DiseaseF")
 
   # Loop over candidates and apply smoothing
   df_smoothed <- df  |>  dplyr::arrange(variety, Date)
@@ -1026,7 +1026,7 @@ runPhenomenals <- function(weather_data,
     dplyr::rename(cyclePercentage=cyclePerc,
                   value_normalized = target_0,
                   year=harvest_year) |>
-    dplyr::select(site,variety,year,cyclePercentage,target,value,value_normalized,AridityF:WindF)
+    dplyr::select(site,variety,year,cyclePercentage,target,value,value_normalized,ColdF:WindF)
 
 
   #CORRELATION MATRIX ON CANDIDATE PHENOMENALS----
@@ -1512,7 +1512,7 @@ runPhenomenals <- function(weather_data,
       )
     ) |>
     dplyr::select(
-      site,variety, target, harvest_year, cyclePerc, AridityF:WindF,
+      site,variety, target, harvest_year, cyclePerc, ColdF:WindF,
       target_normalized = target_0,
       prediction_normalized = pred_full,
       target_original,

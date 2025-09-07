@@ -1,10 +1,33 @@
-.Rproj.user
+# R session files
 .Rhistory
-.Rdata
-.httr-oauth
+.RData
+.Ruserdata
+.Rproj.user/
+
+# RStudio / IDE
+.Rproj.user
+.Rproj.user/*
+.Rproj.user/**
+
+# OS
 .DS_Store
-.quarto
-doc
-inst/doc
-/Meta/
-/doc/
+Thumbs.db
+
+# Auth / tokens
+.httr-oauth
+
+# Quarto
+.quarto/
+*.html
+*.pdf
+
+# Pkgdown / documentation
+docs/
+inst/doc/
+Meta/
+doc/
+pkgdown/
+
+# Development / build artifacts
+dev/
+src_phenomenals

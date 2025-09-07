@@ -1,21 +1,22 @@
 {
-  "settings": {
-    "startYear": 2005,
-    "endYear": 2019,
-    "sites": [
-      "ColliOrientali"
-    ],
-    "isCalibration": "false",
-    "varieties": [
-      "Carmenere"
-    ],
-    "simplexes": 1,
-    "iterations": 1,
-    "weatherTimeStep": "daily"
-  },
-  "paths": {
-    "weatherDir": "C:\\GitHub\\phenomenals\\inst\\bin\\inputFiles\\weather",
-    "referenceFileBBCH": "C:\\GitHub\\phenomenals\\inst\\bin\\inputFiles\\referenceData\\referenceBBCH.csv",
-    "plantParamFile": "C:\\GitHub\\phenomenals\\inst\\bin\\inputFiles\\plant\\phenologyParameters.csv"
-  }
+    "settings": {
+        "startYear": 2006,
+        "endYear": 2012,
+        "sites": [                  
+            "ColliOrientali"
+        ],
+        "isCalibration": "false",
+        "varieties": [
+            "Carmenere"
+        ],
+        "simplexes": 1,
+        "iterations": 1000,
+        "weatherTimeStep": "daily"
+    },
+    "paths": {
+        "weatherDir": "C:\\Program Files\\R\\R-4.4.2\\library\\phenomenals\\bin\\inputFiles\\weather",
+        "referenceFileBBCH": "inputFiles\\referenceData\\referenceBBCH.csv",
+        "plantParamFile": "inputFiles\\plant\\phenologyParameters.csv"
+    }
 }
+

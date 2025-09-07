@@ -1,7 +1,7 @@
 Package: phenomenals
 Title: Phenology memory signals
 Version: 0.0.0.9000
-URL: https://GeoModelLab.github.io/phenomenals
+URL: https://geomodellab.github.io/phenomenals, https://github.com/GeoModelLab/phenomenals
 Authors@R: c(
     person("Simone", "Bregaglio", email = "simone.bregaglio@gmail.com", 
            role = c("aut", "cre"), 

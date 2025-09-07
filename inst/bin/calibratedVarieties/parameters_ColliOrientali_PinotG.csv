@@ -1,10 +1,11 @@
 param, value
-BBCHParameters_bbch08,18.348900725423483
-BBCHParameters_bbch63,82.38686043632015
-BBCHParameters_bbch65,44.436496918018925
-BBCHParameters_bbch68,10.683107437665559
-BBCHParameters_bbch81,60.97841095524065
-BBCHParameters_bbch85,73.05526867787383
-phenomenalsParameters_chillThreshold,7.444337938757721
-phenomenalsParameters_chillingRequirement,121.37220362973241
-phenomenalsParameters_cycleLength,1878.4429957404018
+BBCHParameters_bbch08,25.163973991322194
+BBCHParameters_bbch55,49.01356753473518
+BBCHParameters_bbch63,91.20363134344359
+BBCHParameters_bbch65,42.57970935430251
+BBCHParameters_bbch68,28.959114066075756
+BBCHParameters_bbch81,61.70727819010135
+BBCHParameters_bbch85,77.16791680134939
+phenomenalsParameters_chillThreshold,7.258208421379511
+phenomenalsParameters_chillingRequirement,91.90959933199102
+phenomenalsParameters_cycleLength,2002.6824516309127

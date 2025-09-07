@@ -221,7 +221,7 @@ write_rds(all_outputs, 'all_outputs.rds')
 
 cat("\n✅ All outputs saved successfully.\n")
 
-all_outputs<-read_rds( 'all_outputs.rds')
+all_outputs<-read_rds( "C:\\Users\\Administrator\\OneDrive - CREA\\Documenti\\git\\phenomenals\\dev\\all_outputs.rds")
 
 # For simulated dates
 library(tidyverse)
@@ -314,7 +314,7 @@ pheno_labels_dynamic_all <- all_outputs$correlations |>
   )
 
 correlations<-all_outputs$correlations
-ggplot(correlations |> filter(phenomenals=='TempF'), aes(x = cyclePerc, y = cor)) +
+ggplot(correlations |> filter(ecoFunction=='TempF'), aes(x = cyclePerc, y = cor)) +
   stat_summary(fun.data=mean_se,geom = 'area',
                aes(y = ChillState / 300),
                fill = "steelblue", linewidth = 0.8, alpha = .4) +
@@ -328,7 +328,7 @@ ggplot(correlations |> filter(phenomenals=='TempF'), aes(x = cyclePerc, y = cor)
   scale_fill_manual(values = c("Positive" = "slateblue4", "Negative" = "tomato3")) +
   scale_alpha_identity() +
   scale_x_continuous(breaks = c(50, 150 + 50), labels = c("Y-1", "Y0"), expand = c(0.01, 0)) +
-  facet_wrap(~ paste0(site,"|",variety, "|",phenomenals,"|",target_trait), scales = "free_y",
+  facet_wrap(~ paste0(site,"|",variety, "|",ecoFunction,"|",target_trait), scales = "free_y",
              ncol =3 ) +
   labs(
     title = "Rolling Correlation between Climate Variables and All Target Traits (Binned)",
@@ -343,7 +343,7 @@ ggplot(correlations |> filter(phenomenals=='TempF'), aes(x = cyclePerc, y = cor)
   )+
   ylim(-1,1)
 
-coefficients<-all_outputs$coefficients
+ coefficients<-all_outputs$coefficients
 
 selected<-coefficients |>
   ungroup() |>
@@ -444,8 +444,8 @@ ggsave("Figure4b.png", width = 12, height = 8, dpi = 300)
 
 statistics<-plot_data |>
   filter(cyclePerc_f==400) |>
-  group_by(site,metric, target) |>
-  summarise(r2=mean(value))
+  group_by(site,metric,variety, target) |>
+  summarise(value=mean(value))
 write.csv(statistics,'statistics.csv')
 
 smoothed=all_outputs$smoothed |>

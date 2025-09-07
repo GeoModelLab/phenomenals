@@ -1,16 +1,100 @@
-url: https://GeoModelLab.github.io/phenomenals
+# _pkgdown.yml  — phenomenals website
+# URL: https://geomodellab.github.io/phenomenals
 
+url: https://geomodellab.github.io/phenomenals
+title: "phenomenals"
 template:
   bootstrap: 5
   bootswatch: cosmo
+  bslib:
+    primary: "#198754"     # green accent
+    secondary: "#FFB000"   # warm secondary
+    info: "#0dcaf0"
+    base_font: { google: "Inter" }
+    heading_font: { google: "Inter" }
+    code_font: { google: "JetBrains Mono" }
+  opengraph:
+    image:
+      src: assets/social-card.png
+      alt: "phenomenals: phenology calibration and prediction toolkit"
+    twitter:
+      creator: "@GeoModelLab"
+      card: summary_large_image
+  theme: null
+  includes:
+    in_header: assets/analytics.html   # (optional)
 
+# ---- Branding ----
+favicon: assets/favicon.ico            # provide file
+logo: assets/logo.png                  # provide file
+
+# ---- Navbar ----
 navbar:
   structure:
-    left:
-      - home
-      - reference
-      - articles
+    left:  [home, reference, articles]
+    right: [news, github]
+  bg: dark
+  components:
+    home:
+      text: "Home"
+      href: index.html
+    reference:
+      text: "Reference"
+      href: reference/index.html
+    articles:
+      text: "Articles"
+      menu:
+        - text: "How it works"
+          href: articles/how-it-works.html
+        - text: "Phenology calibration"
+          href: articles/phenology-calibration.html
+        - text: "Run phenomenals"
+          href: articles/run-phenomenals.html
+    news:
+      text: "Changelog"
+      href: news/index.html
+    github:
+      icon: fab fa-github
+      href: https://github.com/GeoModelLab/phenomenals
+      aria-label: "phenomenals GitHub repository"
 
+# ---- Home page tiles ----
+home:
+  title: "phenomenals"
+  description: "Calibration and prediction of crop phenology with ecophysiological drivers."
+  links:
+    - text: GitHub repository
+      href: https://github.com/GeoModelLab/phenomenals
+    - text: Report an issue
+      href: https://github.com/GeoModelLab/phenomenals/issues
+    - text: Get started →
+      href: articles/how-it-works.html
+
+# ---- Sidebar / TOC options ----
+toc:
+  depth: 3
+  collapse: true
+
+# ---- Reference index ----
+reference:
+  - title: "Calibration & Prediction"
+    desc: Core functions to calibrate phenology and run predictions.
+    contents:
+      - phenologyCalibration
+      - runPhenomenals
+  - title: "Datasets"
+    desc: Example datasets shipped with the package.
+    contents:
+      - colliOrientali
+      - bbchSample
+      - targetSample
+      - phenomenalsParameters
+  - title: "Utilities"
+    desc: Helpers for inspection and workflow utilities.
+    contents:
+      - listAvailableVarieties
+
+# ---- Articles (index page) ----
 articles:
   - title: "Getting Started"
     contents:
@@ -18,19 +102,30 @@ articles:
       - phenology-calibration
       - run-phenomenals
 
-reference:
-  - title: "Calibration and prediction functions"
-    contents:
-      - phenologyCalibration
-      - runPhenomenals
+# ---- Search & code style ----
+search:
+  algolia: false
+  options:
+    keyboard: true
 
-  - title: "Datasets"
-    contents:
-      - colliOrientali
-      - bbchSample
-      - targetSample
-      - phenomenalsParameters
+# ---- Development ribbon (optional) ----
+development:
+  mode: auto
 
-  - title: "Utilities"
-    contents:
-      - listAvailableVarieties
+# ---- Footer ----
+footer:
+  structure:
+    left: [license]
+    right: [built_with]
+  components:
+    license: |
+      <p>© GeoModelLab. Released under the <a href="LICENSE.html">MIT License</a>.</p>
+    built_with: |
+      <p>Built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> · Bootstrap 5 · Darkly theme</p>
+
+# ---- News / releases ----
+news:
+  one_page: true
+
+# ---- Build options ----
+destination: docs

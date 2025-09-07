@@ -162,10 +162,9 @@ ggplot(correlations,
 # Predictions table (carry both normalized + original scale)
 predictions <- phenomenals_result$results$predictions
 
-# Long format (rename AridityF -> DroughtF for consistency)
+# Long format 
 pred_long <- predictions %>%
-  tidyr::pivot_longer(AridityF:WindF, names_to = "phenomenals", values_to = "value") %>%
-  mutate(phenomenals = recode(phenomenals, "AridityF" = "DroughtF"))
+  tidyr::pivot_longer(ColdF:WindF, names_to = "phenomenals", values_to = "value")
 
 ggplot(pred_long) +
   stat_summary(fun.data ='mean_se',aes(x = cyclePerc, y = value, fill = phenomenals),
