@@ -180,6 +180,7 @@ phenologyCalibration <- function(weather_data,
     write.table(params_df, file = param_file, sep = ",", row.names = FALSE, col.names = TRUE, quote = FALSE)
 
     # === WRITE WEATHER FILES PER SITE ===
+    s<-site_names[2]
     for (s in site_names) {
       site_weather <- weather_data[weather_data$Site == s, ]
 
@@ -195,7 +196,20 @@ phenologyCalibration <- function(weather_data,
       }
 
       # Try parsing with the known format
-      weather_data$date <- suppressWarnings(as.Date(weather_data$date, format = "%m/%d/%Y"))
+      weather_data$date <- suppressWarnings(
+        as.Date(as.character(weather_data$date),
+                tryFormats = c(
+                  "%m/%d/%Y",        # 04/29/2024
+                  "%Y-%m-%d",        # 2024-04-29
+                  "%d/%m/%Y",        # 29/04/2024
+                  "%m/%d/%y",        # 04/29/24
+                  "%Y/%m/%d",        # 2024/04/29
+                  "%d-%b-%Y",        # 29-Apr-2024
+                  "%b %d, %Y",       # Apr 29, 2024
+                  "%Y-%m-%d %H:%M:%S", # 2024-04-29 13:45:00
+                  "%m/%d/%Y %H:%M:%S"  # 04/29/2024 13:45:00
+                ))
+      )
 
       # Check if any failed
       if (anyNA(weather_data$date)) {
