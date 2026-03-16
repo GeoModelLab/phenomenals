@@ -23,7 +23,10 @@
 #' @param multicollinearity_threshold The threshold to consider phenomenals multicorrelations on each unit of cycle percentage (default is 0.8).
 #' @param max_phenomenals The maximum number of phenomenals to retain (default is 4).
 #' @param bin_size The range of cycle percentage to aggregate phenomenals (default is 1).
-#'
+#' @param weighting_method Weighting scheme used to combine ecophysiological functions with trait correlations.
+#'   `"r_p"` (default) multiplies the scaled signal by the Pearson correlation coefficient and
+#'   the attenuation factor `(1 - p)`. `"r"` uses only the Pearson correlation coefficient.
+
 #' @return A named list with three components:
 #' \describe{
 #'   \item{data}{Raw and processed phenological signals}
@@ -81,7 +84,8 @@ runPhenomenals <- function(weather_data,
                            evaluation_range = list(c(0,200)),
                            multicollinearity_threshold=0.8,
                            max_phenomenals=4,
-                           bin_size=1)
+                           bin_size=3,
+                           weighting_method = "r_p")
 {
   #VALIDATION----
 
@@ -98,6 +102,9 @@ runPhenomenals <- function(weather_data,
   # Remove all matching files
   if (length(list_files_out) > 0) {file.remove(list_files_out)}
 
+  if (!weighting_method %in% c("r_p","r")) {
+    stop("❌ 'weighting_method' must be either 'r_p' or 'r'.")
+  }
 
   suppressPackageStartupMessages({
     library(ggplot2)
@@ -965,7 +972,7 @@ runPhenomenals <- function(weather_data,
                          dplyr::select(-BBCHPhase, -DormancyCompletion, -Completion),
                        by = c("bin", "site", "variety", "phenomenals", "relative_year"))  |>
       dplyr::mutate(
-        weighted_signal = signal * cor* (1-p),
+        weighted_signal = if (weighting_method == "r_p") signal * cor * (1 - p) else signal * cor,
         weighted_signal_pot = cor,
         target = target_col
       )
@@ -1237,6 +1244,18 @@ runPhenomenals <- function(weather_data,
     dplyr::mutate(key = paste(site, variety, target, sep = "|")) |>
     dplyr::filter(key %in% valid_keys)
 
+  # helper to extract lmg safely from calc.relimp() result
+  get_lmg_vec <- function(rel_obj) {
+    # list-like access first
+    if (!is.null(rel_obj$lmg)) return(rel_obj$lmg)
+    # S4 fallback
+    if (methods::is(rel_obj, "calc.relimp") && "lmg" %in% methods::slotNames(rel_obj)) {
+      return(rel_obj@lmg)
+    }
+    stop("LMG importance not found in relaimpo object.")
+  }
+
+
   model_results_variety_loocv <- signal_index_wide_all_with_targets |>
     dplyr::filter(
       purrr::map_lgl(cyclePerc, function(x) {
@@ -1317,28 +1336,28 @@ runPhenomenals <- function(weather_data,
             # Relative importance
             relimpo_result <- tryCatch({
               rel <- relaimpo::calc.relimp(model_full, type = "lmg", rela = TRUE)
-              list(
-                df = as.data.frame(rel@lmg) |>
-                  tibble::rownames_to_column("predictor") |>
-                  dplyr::mutate(
-                    variety = this_variety,
-                    site = this_site,
-                    cyclePerc = this_x,
-                    target = this_target,
-                    relaimpo_note = "OK"
-                  ),
-                failed = FALSE
-              )
+              lmg_vec <- get_lmg_vec(rel)
+
+              rel_df <- tibble::enframe(lmg_vec, name = "predictor", value = "lmg") |>
+                dplyr::mutate(
+                  variety   = this_variety,
+                  site      = this_site,
+                  cyclePerc = this_x,
+                  target    = this_target,
+                  relaimpo_note = "OK"
+                )
+
+              list(df = rel_df, failed = FALSE)
             }, error = function(e) {
               list(
                 df = tibble::tibble(
                   predictor = predictors,
-                  lmg = 0,
-                  variety = this_variety,
-                  site = this_site,
+                  lmg       = 0,
+                  variety   = this_variety,
+                  site      = this_site,
                   cyclePerc = this_x,
-                  target = this_target,
-                  relaimpo_note = "relimpo failed"
+                  target    = this_target,
+                  relaimpo_note = paste("relimpo failed:", conditionMessage(e))
                 ),
                 failed = TRUE
               )
@@ -1415,13 +1434,28 @@ runPhenomenals <- function(weather_data,
     purrr::flatten() |>
     purrr::compact()
 
-  all_predictions <- purrr::map_dfr(model_results_variety_loocv, "predictions")
-  all_diagnostics <- purrr::map_dfr(model_results_variety_loocv, "diagnostics")
-  all_relimpo <- purrr::map_dfr(model_results_variety_loocv, "relaimpo") |>
-    dplyr::rename(relImpo = `rel@lmg`)
-  all_coefficients <- purrr::map_dfr(model_results_variety_loocv, "coefficients") |>
+  # bind helpers that skip NULLs
+  bind_piece <- function(x, name) x |> purrr::map(name) |> purrr::compact() |> dplyr::bind_rows()
+
+  all_predictions  <- bind_piece(model_results_variety_loocv, "predictions")
+  all_diagnostics  <- bind_piece(model_results_variety_loocv, "diagnostics")
+
+  # SAFE relaimpo collector: no error if empty; rename if 'lmg' exists
+  all_relimpo <- bind_piece(model_results_variety_loocv, "relaimpo") |>
+    dplyr::rename_with(~ "relImpo", dplyr::any_of("lmg"))
+
+  # Optional: if some rows came with a different importance column name (e.g., 'value'),
+  # you can normalize further:
+  if (!"relImpo" %in% names(all_relimpo)) {
+    cand <- intersect(c("value", "LMG", "importance", "rel@lmg"), names(all_relimpo))
+    if (length(cand) > 0) {
+      all_relimpo <- dplyr::rename(all_relimpo, relImpo = .data[[cand[1]]])
+    }
+  }
+
+  all_coefficients <- bind_piece(model_results_variety_loocv, "coefficients") |>
     dplyr::select(site, variety, target, cyclePerc, term:p.value) |>
-    dplyr::arrange()
+    dplyr::arrange(site, variety, target, cyclePerc, term)
 
   # --- build a FULL scoring frame = all simulated years (with/without target) ----
   # (use signal_index_wide_all, NOT the "...with_targets" filtered version)

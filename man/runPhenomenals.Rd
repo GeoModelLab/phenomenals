@@ -18,7 +18,8 @@ runPhenomenals(
   evaluation_range = list(c(0, 200)),
   multicollinearity_threshold = 0.8,
   max_phenomenals = 4,
-  bin_size = 1
+  bin_size = 3,
+  weighting_method = "r_p"
 )
 }
 \arguments{
@@ -57,6 +58,10 @@ You can start with \code{phenomenals::phenomenalsParameters} and modify it as ne
 \item{max_phenomenals}{The maximum number of phenomenals to retain (default is 4).}
 
 \item{bin_size}{The range of cycle percentage to aggregate phenomenals (default is 1).}
+
+\item{weighting_method}{Weighting scheme used to combine ecophysiological functions with trait correlations.
+\code{"r_p"} (default) multiplies the scaled signal by the Pearson correlation coefficient and
+the attenuation factor \code{(1 - p)}. \code{"r"} uses only the Pearson correlation coefficient.}
 }
 \value{
 A named list with three components:

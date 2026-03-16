@@ -1,8 +1,8 @@
 # Load and prepare ----
 rm(list = ls())
 
-remove.packages("phenomenals")
-devtools::document()
+# remove.packages("phenomenals")
+# devtools::document()
 #devtools::install(upgrade = "never")
 
 library(phenomenals)
@@ -11,6 +11,8 @@ library(purrr)
 library(readr)
 library(tools)
 library(tibble)
+
+phenomenals::listAvailableVarieties()
 
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
